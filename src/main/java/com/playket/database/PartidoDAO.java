@@ -1,0 +1,73 @@
+package com.playket.database;
+
+import com.playket.model.Partido;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class PartidoDAO {
+
+    public boolean insertar(Partido p) {
+        String sql = "INSERT INTO PARTIDO (fecha, hora, sede, estado, tipo_victoria, " +
+                "id_torneo, id_local, id_visitante, id_ganador) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement ps = ConexionDB.getConexion().prepareStatement(sql)) {
+            ps.setDate(1, p.getFecha() != null ? Date.valueOf(p.getFecha()) : null);
+            ps.setTime(2, p.getHora() != null ? Time.valueOf(p.getHora()) : null);
+            ps.setString(3, p.getSede());
+            ps.setString(4, p.getEstado());
+            ps.setString(5, p.getTipoVictoria());
+            ps.setInt(6, p.getIdTorneo());
+            ps.setInt(7, p.getIdLocal());
+            ps.setInt(8, p.getIdVisitante());
+            if (p.getIdGanador() != null) ps.setInt(9, p.getIdGanador());
+            else ps.setNull(9, Types.INTEGER);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("Error al insertar partido: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public List<Partido> listarPorTorneo(int idTorneo) {
+        List<Partido> lista = new ArrayList<>();
+        String sql = "SELECT * FROM PARTIDO WHERE id_torneo = ? ORDER BY id";
+        try (PreparedStatement ps = ConexionDB.getConexion().prepareStatement(sql)) {
+            ps.setInt(1, idTorneo);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) lista.add(mapear(rs));
+        } catch (SQLException e) {
+            System.err.println("Error al listar partidos: " + e.getMessage());
+        }
+        return lista;
+    }
+
+    public boolean actualizarResultado(int idPartido, int idGanador, String tipoVictoria) {
+        String sql = "UPDATE PARTIDO SET id_ganador = ?, tipo_victoria = ?, estado = 'FINALIZADO' WHERE id = ?";
+        try (PreparedStatement ps = ConexionDB.getConexion().prepareStatement(sql)) {
+            ps.setInt(1, idGanador);
+            ps.setString(2, tipoVictoria);
+            ps.setInt(3, idPartido);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("Error al actualizar resultado: " + e.getMessage());
+            return false;
+        }
+    }
+
+    private Partido mapear(ResultSet rs) throws SQLException {
+        Partido p = new Partido();
+        p.setId(rs.getInt("id"));
+        p.setFecha(rs.getDate("fecha") != null ? rs.getDate("fecha").toLocalDate() : null);
+        p.setHora(rs.getTime("hora") != null ? rs.getTime("hora").toLocalTime() : null);
+        p.setSede(rs.getString("sede"));
+        p.setEstado(rs.getString("estado"));
+        p.setTipoVictoria(rs.getString("tipo_victoria"));
+        p.setIdTorneo(rs.getInt("id_torneo"));
+        p.setIdLocal(rs.getInt("id_local"));
+        p.setIdVisitante(rs.getInt("id_visitante"));
+        int ganador = rs.getInt("id_ganador");
+        p.setIdGanador(rs.wasNull() ? null : ganador);
+        return p;
+    }
+}

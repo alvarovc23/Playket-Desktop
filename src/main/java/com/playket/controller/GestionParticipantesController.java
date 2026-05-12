@@ -4,9 +4,11 @@ import com.playket.database.ParticipanteDAO;
 import com.playket.model.Participante;
 import com.playket.model.Torneo;
 import com.playket.model.Usuario;
+import com.playket.util.GeneradorCuadro;
 import com.playket.view.VentanaGestionParticipantes;
 import com.playket.view.VentanaInicio;
 
+import javax.swing.*;
 import java.util.List;
 
 public class GestionParticipantesController {
@@ -84,10 +86,29 @@ public class GestionParticipantesController {
 
     private void generarCuadro() {
         if (participantes.size() < 2) {
-            vista.setMensaje("Necesitas al menos 2 participantes para generar el cuadro");
+            vista.setMensaje("Necesitas al menos 2 participantes");
             return;
         }
-        System.out.println("Generar cuadro");
+
+        int confirmacion = JOptionPane.showConfirmDialog(
+                vista,
+                "Una vez generado el cuadro no podrás añadir ni eliminar participantes. ¿Continuar?",
+                "Confirmar",
+                JOptionPane.YES_NO_OPTION
+        );
+
+        if (confirmacion != JOptionPane.YES_OPTION) return;
+
+        GeneradorCuadro generador = new GeneradorCuadro();
+        if (generador.generarEliminacion(torneo, participantes)) {
+            JOptionPane.showMessageDialog(vista, "¡Cuadro generado correctamente!");
+            vista.dispose();
+            VentanaInicio ventanaInicio = new VentanaInicio(usuarioActual);
+            new InicioController(ventanaInicio, usuarioActual);
+            ventanaInicio.setVisible(true);
+        } else {
+            vista.setMensaje("Error al generar el cuadro");
+        }
     }
 
     private void volver() {
