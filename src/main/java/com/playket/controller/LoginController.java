@@ -3,6 +3,7 @@ package com.playket.controller;
 import com.playket.database.UsuarioDAO;
 import com.playket.model.Usuario;
 import com.playket.util.PasswordHasher;
+import com.playket.view.VentanaInicio;
 import com.playket.view.VentanaLogin;
 import com.playket.view.VentanaRegistro;
 
@@ -84,7 +85,9 @@ public class LoginController {
 
     private void abrirInicio(Usuario usuario) {
         vista.dispose();
-        System.out.println("Login correcto: " + usuario.getNombre());
+        VentanaInicio ventanaInicio = new VentanaInicio(usuario);
+        new InicioController(ventanaInicio, usuario);
+        ventanaInicio.setVisible(true);
     }
 
     private void abrirRegistro() {
