@@ -3,6 +3,7 @@ package com.playket.controller;
 import com.playket.database.TorneoDAO;
 import com.playket.model.Torneo;
 import com.playket.model.Usuario;
+import com.playket.view.VentanaCrearTorneo;
 import com.playket.view.VentanaInicio;
 
 import java.util.List;
@@ -33,7 +34,10 @@ public class InicioController {
     }
 
     private void abrirCrearTorneo() {
-        System.out.println("Abrir crear torneo");
+        vista.dispose();
+        VentanaCrearTorneo ventanaCrear = new VentanaCrearTorneo();
+        new CrearTorneoController(ventanaCrear, usuarioActual);
+        ventanaCrear.setVisible(true);
     }
 
     private void abrirBuscar() {
