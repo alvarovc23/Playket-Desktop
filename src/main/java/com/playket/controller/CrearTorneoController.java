@@ -6,6 +6,7 @@ import com.playket.model.Deporte;
 import com.playket.model.Torneo;
 import com.playket.model.Usuario;
 import com.playket.view.VentanaCrearTorneo;
+import com.playket.view.VentanaGestionParticipantes;
 import com.playket.view.VentanaInicio;
 
 import javax.swing.*;
@@ -72,10 +73,12 @@ public class CrearTorneoController {
         torneo.setIdOrganizador(usuarioActual.getId());
 
         if (torneoDAO.insertar(torneo)) {
-            vista.setMensajeVerde("Torneo creado correctamente");
-            Timer timer = new javax.swing.Timer(1500, ev -> volver());
-            timer.setRepeats(false);
-            timer.start();
+            Torneo torneoCreado = torneoDAO.buscarUltimoPorOrganizador(usuarioActual.getId());
+            vista.dispose();
+            VentanaGestionParticipantes ventanaParticipantes =
+                    new VentanaGestionParticipantes(torneoCreado);
+            new GestionParticipantesController(ventanaParticipantes, torneoCreado, usuarioActual);
+            ventanaParticipantes.setVisible(true);
         } else {
             vista.setMensaje("Error al crear el torneo, inténtalo de nuevo");
         }

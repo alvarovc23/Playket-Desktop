@@ -104,4 +104,16 @@ public class TorneoDAO {
                 rs.getInt("id_organizador")
         );
     }
+
+    public Torneo buscarUltimoPorOrganizador(int idOrganizador) {
+        String sql = "SELECT * FROM TORNEO WHERE id_organizador = ? ORDER BY id DESC LIMIT 1";
+        try (PreparedStatement ps = ConexionDB.getConexion().prepareStatement(sql)) {
+            ps.setInt(1, idOrganizador);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return mapear(rs);
+        } catch (SQLException e) {
+            System.err.println("Error al buscar último torneo: " + e.getMessage());
+        }
+        return null;
+    }
 }
