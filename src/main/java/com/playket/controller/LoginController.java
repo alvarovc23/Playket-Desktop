@@ -4,6 +4,7 @@ import com.playket.database.UsuarioDAO;
 import com.playket.model.Usuario;
 import com.playket.util.PasswordHasher;
 import com.playket.view.VentanaLogin;
+import com.playket.view.VentanaRegistro;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -88,6 +89,8 @@ public class LoginController {
 
     private void abrirRegistro() {
         vista.dispose();
-        System.out.println("Abrir registro");
+        VentanaRegistro ventanaRegistro = new VentanaRegistro();
+        new RegistroController(ventanaRegistro);
+        ventanaRegistro.setVisible(true);
     }
 }
