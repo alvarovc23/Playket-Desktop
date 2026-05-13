@@ -14,6 +14,7 @@ public class VentanaBuscarTorneos extends JFrame {
     private JComboBox<Deporte> comboDeporte;
     private JButton btnBuscar;
     private JButton btnVolver;
+    private JButton btnSeguir;
     private DefaultTableModel modeloTabla;
     private JTable tablaTorneos;
 
@@ -67,13 +68,16 @@ public class VentanaBuscarTorneos extends JFrame {
         tablaTorneos = new JTable(modeloTabla);
         JScrollPane scroll = new JScrollPane(tablaTorneos);
 
-        // Botón volver
+        // Botones inferiores
+        JPanel panelBotones = new JPanel(new GridLayout(1, 2, 10, 0));
+        btnSeguir = new JButton("Seguir torneo seleccionado");
         btnVolver = new JButton("Volver");
-        btnVolver.setPreferredSize(new Dimension(0, 34));
+        panelBotones.add(btnSeguir);
+        panelBotones.add(btnVolver);
 
         panelPrincipal.add(panelFiltros, BorderLayout.NORTH);
         panelPrincipal.add(scroll, BorderLayout.CENTER);
-        panelPrincipal.add(btnVolver, BorderLayout.SOUTH);
+        panelPrincipal.add(panelBotones, BorderLayout.SOUTH);
 
         add(panelPrincipal);
     }
@@ -106,4 +110,5 @@ public class VentanaBuscarTorneos extends JFrame {
     public int getFilaSeleccionada() { return tablaTorneos.getSelectedRow(); }
     public JButton getBtnBuscar() { return btnBuscar; }
     public JButton getBtnVolver() { return btnVolver; }
+    public JButton getBtnSeguir() { return btnSeguir; }
 }
