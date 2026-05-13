@@ -40,11 +40,16 @@ public class RegistrarResultadoController {
     }
 
     private void registrar(int idGanador) {
-        int confirmacion = JOptionPane.showConfirmDialog(
+        Object[] opciones = {"Sí", "No"};
+        int confirmacion = JOptionPane.showOptionDialog(
                 vista,
                 "¿Confirmas este resultado?",
                 "Confirmar",
-                JOptionPane.YES_NO_OPTION
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                opciones,
+                opciones[0]
         );
         if (confirmacion != JOptionPane.YES_OPTION) return;
 

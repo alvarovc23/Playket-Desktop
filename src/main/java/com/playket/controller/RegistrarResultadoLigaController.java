@@ -40,9 +40,18 @@ public class RegistrarResultadoLigaController {
     }
 
     private void registrar(int idGanador) {
-        int confirmacion = JOptionPane.showConfirmDialog(
-                vista, "¿Confirmas este resultado?", "Confirmar", JOptionPane.YES_NO_OPTION);
-        if (confirmacion != JOptionPane.YES_OPTION) return;
+        Object[] opciones = {"Sí", "No"};
+        int confirmacion = JOptionPane.showOptionDialog(
+                vista,
+                "¿Confirmas este resultado?",
+                "Confirmar",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                opciones,
+                opciones[0]
+        );
+        if (confirmacion != 0) return;
 
         if (partidoDAO.actualizarResultado(partido.getId(), idGanador, "normal")) {
             JOptionPane.showMessageDialog(vista, "Resultado registrado correctamente");

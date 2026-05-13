@@ -58,10 +58,18 @@ public class DesignarCoOrganizadorController {
         }
 
         if (rolTorneoDAO.esCoOrganizador(usuario.getId(), torneo.getId())) {
-            int confirmar = JOptionPane.showConfirmDialog(vista,
+            Object[] opciones = {"Sí", "No"};
+            int confirmar = JOptionPane.showOptionDialog(
+                    vista,
                     "Este usuario ya es co-organizador. ¿Quieres revocarle el rol?",
-                    "Revocar rol", JOptionPane.YES_NO_OPTION);
-            if (confirmar == JOptionPane.YES_OPTION) {
+                    "Revocar rol",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    opciones,
+                    opciones[0]
+            );
+            if (confirmar == 0) {
                 rolTorneoDAO.revocarCoOrganizador(usuario.getId(), torneo.getId());
                 vista.setMensajeVerde("Rol revocado correctamente");
                 cargarCoOrganizadores();

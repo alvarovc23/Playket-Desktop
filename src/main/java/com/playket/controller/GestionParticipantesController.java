@@ -91,11 +91,16 @@ public class GestionParticipantesController {
             return;
         }
 
-        int confirmacion = JOptionPane.showConfirmDialog(
+        Object[] opciones = {"Sí", "No"};
+        int confirmacion = JOptionPane.showOptionDialog(
                 vista,
                 "Una vez generado el cuadro no podrás añadir ni eliminar participantes. ¿Continuar?",
                 "Confirmar",
-                JOptionPane.YES_NO_OPTION
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                opciones,
+                opciones[0]
         );
         if (confirmacion != JOptionPane.YES_OPTION) return;
 
