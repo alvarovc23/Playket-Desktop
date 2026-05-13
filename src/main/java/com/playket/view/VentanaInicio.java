@@ -11,7 +11,6 @@ public class VentanaInicio extends JFrame {
 
     private final Usuario usuarioActual;
     private JPanel panelMisTorneos;
-    private JPanel panelTorneosSeguidos;
     private JButton btnCrearTorneo;
     private JButton btnBuscar;
     private JButton btnPerfil;
@@ -20,7 +19,7 @@ public class VentanaInicio extends JFrame {
     public VentanaInicio(Usuario usuarioActual) {
         this.usuarioActual = usuarioActual;
         setTitle("Playket - Inicio");
-        setSize(500, 550);
+        setSize(500, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
@@ -56,20 +55,11 @@ public class VentanaInicio extends JFrame {
         btnCrearTorneo.setAlignmentX(Component.CENTER_ALIGNMENT);
         btnCrearTorneo.setMaximumSize(new Dimension(Integer.MAX_VALUE, 36));
 
-        // Torneos que sigo
-        JLabel lblSeguidos = new JLabel("Torneos que sigo");
-        lblSeguidos.setFont(new Font("Arial", Font.BOLD, 15));
-        lblSeguidos.setBorder(BorderFactory.createEmptyBorder(15, 0, 5, 0));
-        panelTorneosSeguidos = new JPanel();
-        panelTorneosSeguidos.setLayout(new BoxLayout(panelTorneosSeguidos, BoxLayout.Y_AXIS));
-
         panelContenido.add(lblMisTorneos);
         panelContenido.add(Box.createRigidArea(new Dimension(0, 8)));
         panelContenido.add(panelMisTorneos);
         panelContenido.add(Box.createRigidArea(new Dimension(0, 8)));
         panelContenido.add(btnCrearTorneo);
-        panelContenido.add(lblSeguidos);
-        panelContenido.add(panelTorneosSeguidos);
 
         // Barra inferior
         JPanel panelBottom = new JPanel(new GridLayout(1, 1));
@@ -93,17 +83,6 @@ public class VentanaInicio extends JFrame {
         }
         panelMisTorneos.revalidate();
         panelMisTorneos.repaint();
-    }
-
-    public void cargarTorneosSeguidos(List<Torneo> torneos) {
-        panelTorneosSeguidos.removeAll();
-        if (torneos.isEmpty()) {
-            panelTorneosSeguidos.add(new JLabel("No sigues ningún torneo todavía"));
-        } else {
-            for (Torneo t : torneos) panelTorneosSeguidos.add(crearFilaTorneo(t));
-        }
-        panelTorneosSeguidos.revalidate();
-        panelTorneosSeguidos.repaint();
     }
 
     private JPanel crearFilaTorneo(Torneo t) {

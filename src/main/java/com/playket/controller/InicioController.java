@@ -1,25 +1,26 @@
 package com.playket.controller;
 
-import com.playket.database.SeguimientoDAO;
 import com.playket.database.TorneoDAO;
 import com.playket.model.Torneo;
 import com.playket.model.Usuario;
-import com.playket.view.*;
+import com.playket.view.VentanaClasificacionLiga;
+import com.playket.view.VentanaCuadroEliminacion;
+import com.playket.view.VentanaCrearTorneo;
+import com.playket.view.VentanaInicio;
+import com.playket.view.VentanaBuscarTorneos;
+import com.playket.view.VentanaPerfil;
 
-import java.util.Collections;
 import java.util.List;
 
 public class InicioController {
 
     private final VentanaInicio vista;
     private final TorneoDAO torneoDAO;
-    private final SeguimientoDAO seguimientoDAO;
     private final Usuario usuarioActual;
 
     public InicioController(VentanaInicio vista, Usuario usuarioActual) {
         this.vista = vista;
         this.torneoDAO = new TorneoDAO();
-        this.seguimientoDAO = new SeguimientoDAO();
         this.usuarioActual = usuarioActual;
         inicializarEventos();
         cargarDatos();
@@ -35,8 +36,6 @@ public class InicioController {
     private void cargarDatos() {
         List<Torneo> misTorneos = torneoDAO.listarPorOrganizador(usuarioActual.getId());
         vista.cargarMisTorneos(misTorneos);
-        List<Torneo> torneosSeguidos = seguimientoDAO.listarTorneosSeguidos(usuarioActual.getId());
-        vista.cargarTorneosSeguidos(torneosSeguidos);
     }
 
     private void abrirCrearTorneo() {
