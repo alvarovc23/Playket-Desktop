@@ -13,7 +13,6 @@ public class VentanaClasificacionLiga extends JFrame {
     private JTable tablaClasificacion;
     private JTable tablaPartidos;
     private JButton btnRegistrarResultado;
-    private JButton btnCoOrganizador;
     private JButton btnVolver;
     private int idPartidoSeleccionado = -1;
     private int idLocalSeleccionado = -1;
@@ -67,12 +66,10 @@ public class VentanaClasificacionLiga extends JFrame {
         panelCentral.add(scrollPartidos);
 
         // Botones
-        JPanel panelBotones = new JPanel(new GridLayout(1, 3, 10, 0));
+        JPanel panelBotones = new JPanel(new GridLayout(1, 2, 10, 0));
         btnRegistrarResultado = new JButton("Registrar resultado");
-        btnCoOrganizador = new JButton("Co-organizadores");
         btnVolver = new JButton("Volver");
         panelBotones.add(btnRegistrarResultado);
-        panelBotones.add(btnCoOrganizador);
         panelBotones.add(btnVolver);
 
         panelPrincipal.add(panelCabecera, BorderLayout.NORTH);
@@ -112,7 +109,6 @@ public class VentanaClasificacionLiga extends JFrame {
     public int getIdLocalSeleccionado() { return idLocalSeleccionado; }
     public int getIdVisitanteSeleccionado() { return idVisitanteSeleccionado; }
     public JButton getBtnRegistrarResultado() { return btnRegistrarResultado; }
-    public JButton getBtnCoOrganizador() { return btnCoOrganizador; }
     public JButton getBtnVolver() { return btnVolver; }
     public Torneo getTorneo() { return torneo; }
 }

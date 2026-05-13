@@ -7,7 +7,6 @@ import com.playket.model.Partido;
 import com.playket.model.Torneo;
 import com.playket.model.Usuario;
 import com.playket.view.VentanaClasificacionLiga;
-import com.playket.view.VentanaDesignarCoOrganizador;
 import com.playket.view.VentanaInicio;
 import com.playket.view.VentanaRegistrarResultado;
 
@@ -47,7 +46,6 @@ public class ClasificacionLigaController {
     }
 
     private void cargarClasificacion(List<Participante> participantes) {
-        // Mapa: idParticipante -> [PJ, PG, PE, PP, Pts]
         Map<Integer, int[]> stats = new LinkedHashMap<>();
         for (Participante p : participantes) stats.put(p.getId(), new int[5]);
 
@@ -57,10 +55,10 @@ public class ClasificacionLigaController {
             int[] visitante = stats.get(p.getIdVisitante());
             if (local == null || visitante == null) continue;
 
-            local[0]++; visitante[0]++; // PJ
+            local[0]++; visitante[0]++;
 
             if (p.getIdGanador() == null) {
-                local[2]++; visitante[2]++; // empate
+                local[2]++; visitante[2]++;
                 local[4]++; visitante[4]++;
             } else if (p.getIdGanador() == p.getIdLocal()) {
                 local[1]++; local[4] += 3;
@@ -101,7 +99,6 @@ public class ClasificacionLigaController {
     private void inicializarEventos() {
         vista.getBtnVolver().addActionListener(e -> volver());
         vista.getBtnRegistrarResultado().addActionListener(e -> registrarResultado());
-        vista.getBtnCoOrganizador().addActionListener(e -> abrirCoOrganizador());
     }
 
     private void registrarResultado() {
@@ -124,17 +121,10 @@ public class ClasificacionLigaController {
 
         VentanaRegistrarResultado ventana = new VentanaRegistrarResultado(
                 partido, mapaParticipantes);
-        new RegistrarResultadoLigaController(ventana, partido, torneo,
+        new RegistrarResultadoController(ventana, partido, torneo,
                 usuarioActual, mapaParticipantes);
         ventana.setVisible(true);
         vista.dispose();
-    }
-
-    private void abrirCoOrganizador() {
-        vista.dispose();
-        VentanaDesignarCoOrganizador ventana = new VentanaDesignarCoOrganizador(torneo);
-        new DesignarCoOrganizadorController(ventana, torneo, usuarioActual);
-        ventana.setVisible(true);
     }
 
     private void volver() {

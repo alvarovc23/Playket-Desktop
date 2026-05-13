@@ -5,6 +5,7 @@ import com.playket.model.Participante;
 import com.playket.model.Partido;
 import com.playket.model.Torneo;
 import com.playket.model.Usuario;
+import com.playket.view.VentanaClasificacionLiga;
 import com.playket.view.VentanaCuadroEliminacion;
 import com.playket.view.VentanaRegistrarResultado;
 
@@ -63,8 +64,14 @@ public class RegistrarResultadoController {
 
     private void volver() {
         vista.dispose();
-        VentanaCuadroEliminacion ventana = new VentanaCuadroEliminacion(torneo);
-        new CuadroEliminacionController(ventana, torneo, usuarioActual);
-        ventana.setVisible(true);
+        if (torneo.getFormato().equals("ELIMINACION")) {
+            VentanaCuadroEliminacion ventana = new VentanaCuadroEliminacion(torneo);
+            new CuadroEliminacionController(ventana, torneo, usuarioActual);
+            ventana.setVisible(true);
+        } else {
+            VentanaClasificacionLiga ventana = new VentanaClasificacionLiga(torneo);
+            new ClasificacionLigaController(ventana, torneo, usuarioActual);
+            ventana.setVisible(true);
+        }
     }
 }

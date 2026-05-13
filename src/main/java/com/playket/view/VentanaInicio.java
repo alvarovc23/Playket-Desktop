@@ -12,20 +12,15 @@ public class VentanaInicio extends JFrame {
     private final Usuario usuarioActual;
     private JPanel panelMisTorneos;
     private JPanel panelTorneosSeguidos;
-    private JPanel panelTorneosCoOrg;
     private JButton btnCrearTorneo;
     private JButton btnBuscar;
     private JButton btnPerfil;
     private java.util.function.Consumer<Torneo> torneoClickListener;
 
-    public void setTorneoClickListener(java.util.function.Consumer<Torneo> listener) {
-        this.torneoClickListener = listener;
-    }
-
     public VentanaInicio(Usuario usuarioActual) {
         this.usuarioActual = usuarioActual;
         setTitle("Playket - Inicio");
-        setSize(500, 600);
+        setSize(500, 550);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
@@ -76,17 +71,8 @@ public class VentanaInicio extends JFrame {
         panelContenido.add(lblSeguidos);
         panelContenido.add(panelTorneosSeguidos);
 
-        JLabel lblCoOrg = new JLabel("Torneos donde soy co-organizador");
-        lblCoOrg.setFont(new Font("Arial", Font.BOLD, 15));
-        lblCoOrg.setBorder(BorderFactory.createEmptyBorder(15, 0, 5, 0));
-        panelTorneosCoOrg = new JPanel();
-        panelTorneosCoOrg.setLayout(new BoxLayout(panelTorneosCoOrg, BoxLayout.Y_AXIS));
-
-        panelContenido.add(lblCoOrg);
-        panelContenido.add(panelTorneosCoOrg);
-
         // Barra inferior
-        JPanel panelBottom = new JPanel(new GridLayout(1, 2));
+        JPanel panelBottom = new JPanel(new GridLayout(1, 1));
         panelBottom.setBorder(BorderFactory.createEmptyBorder(5, 15, 10, 15));
         btnBuscar = new JButton("Buscar torneos");
         panelBottom.add(btnBuscar);
@@ -103,9 +89,7 @@ public class VentanaInicio extends JFrame {
         if (torneos.isEmpty()) {
             panelMisTorneos.add(new JLabel("No tienes torneos creados todavía"));
         } else {
-            for (Torneo t : torneos) {
-                panelMisTorneos.add(crearFilaTorneo(t));
-            }
+            for (Torneo t : torneos) panelMisTorneos.add(crearFilaTorneo(t));
         }
         panelMisTorneos.revalidate();
         panelMisTorneos.repaint();
@@ -116,9 +100,7 @@ public class VentanaInicio extends JFrame {
         if (torneos.isEmpty()) {
             panelTorneosSeguidos.add(new JLabel("No sigues ningún torneo todavía"));
         } else {
-            for (Torneo t : torneos) {
-                panelTorneosSeguidos.add(crearFilaTorneo(t));
-            }
+            for (Torneo t : torneos) panelTorneosSeguidos.add(crearFilaTorneo(t));
         }
         panelTorneosSeguidos.revalidate();
         panelTorneosSeguidos.repaint();
@@ -142,19 +124,9 @@ public class VentanaInicio extends JFrame {
         return fila;
     }
 
-    public void cargarTorneosCoOrganizador(List<Torneo> torneos) {
-        panelTorneosCoOrg.removeAll();
-        if (torneos.isEmpty()) {
-            panelTorneosCoOrg.add(new JLabel("No eres co-organizador de ningún torneo"));
-        } else {
-            for (Torneo t : torneos) {
-                panelTorneosCoOrg.add(crearFilaTorneo(t));
-            }
-        }
-        panelTorneosCoOrg.revalidate();
-        panelTorneosCoOrg.repaint();
+    public void setTorneoClickListener(java.util.function.Consumer<Torneo> listener) {
+        this.torneoClickListener = listener;
     }
-
 
     public JButton getBtnCrearTorneo() { return btnCrearTorneo; }
     public JButton getBtnBuscar() { return btnBuscar; }

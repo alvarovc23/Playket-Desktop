@@ -14,7 +14,6 @@ public class VentanaCuadroEliminacion extends JFrame {
     private JPanel panelCuadro;
     private JButton btnVolver;
     private JButton btnRegistrarResultado;
-    private JButton btnCoOrganizador;
     private Partido partidoSeleccionado;
 
     public VentanaCuadroEliminacion(Torneo torneo) {
@@ -45,12 +44,10 @@ public class VentanaCuadroEliminacion extends JFrame {
         scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
         // Botones inferiores
-        JPanel panelBotones = new JPanel(new GridLayout(1, 3, 10, 0));
+        JPanel panelBotones = new JPanel(new GridLayout(1, 2, 10, 0));
         btnRegistrarResultado = new JButton("Registrar resultado");
-        btnCoOrganizador = new JButton("Co-organizadores");
         btnVolver = new JButton("Volver");
         panelBotones.add(btnRegistrarResultado);
-        panelBotones.add(btnCoOrganizador);
         panelBotones.add(btnVolver);
 
         panelPrincipal.add(panelCabecera, BorderLayout.NORTH);
@@ -115,7 +112,6 @@ public class VentanaCuadroEliminacion extends JFrame {
     }
 
     public Partido getPartidoSeleccionado() { return partidoSeleccionado; }
-    public JButton getBtnCoOrganizador() { return btnCoOrganizador; }
     public JButton getBtnVolver() { return btnVolver; }
     public JButton getBtnRegistrarResultado() { return btnRegistrarResultado; }
     public Torneo getTorneo() { return torneo; }
