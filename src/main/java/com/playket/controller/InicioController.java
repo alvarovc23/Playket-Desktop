@@ -5,6 +5,7 @@ import com.playket.model.Torneo;
 import com.playket.model.Usuario;
 import com.playket.view.VentanaCrearTorneo;
 import com.playket.view.VentanaInicio;
+import com.playket.view.VentanaCuadroEliminacion;
 
 import java.util.List;
 
@@ -25,6 +26,7 @@ public class InicioController {
     private void inicializarEventos() {
         vista.getBtnCrearTorneo().addActionListener(e -> abrirCrearTorneo());
         vista.getBtnBuscar().addActionListener(e -> abrirBuscar());
+        vista.setTorneoClickListener(torneo -> abrirTorneo(torneo));
     }
 
     private void cargarDatos() {
@@ -38,6 +40,13 @@ public class InicioController {
         VentanaCrearTorneo ventanaCrear = new VentanaCrearTorneo();
         new CrearTorneoController(ventanaCrear, usuarioActual);
         ventanaCrear.setVisible(true);
+    }
+
+    private void abrirTorneo(Torneo torneo) {
+        vista.dispose();
+        VentanaCuadroEliminacion ventana = new VentanaCuadroEliminacion(torneo);
+        new CuadroEliminacionController(ventana, torneo, usuarioActual);
+        ventana.setVisible(true);
     }
 
     private void abrirBuscar() {

@@ -15,6 +15,11 @@ public class VentanaInicio extends JFrame {
     private JButton btnCrearTorneo;
     private JButton btnBuscar;
     private JButton btnPerfil;
+    private java.util.function.Consumer<Torneo> torneoClickListener;
+
+    public void setTorneoClickListener(java.util.function.Consumer<Torneo> listener) {
+        this.torneoClickListener = listener;
+    }
 
     public VentanaInicio(Usuario usuarioActual) {
         this.usuarioActual = usuarioActual;
@@ -119,6 +124,11 @@ public class VentanaInicio extends JFrame {
         fila.add(nombre, BorderLayout.WEST);
         fila.add(estado, BorderLayout.EAST);
         fila.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        fila.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                if (torneoClickListener != null) torneoClickListener.accept(t);
+            }
+        });
         return fila;
     }
 
