@@ -7,6 +7,7 @@ import com.playket.model.Partido;
 import com.playket.model.Torneo;
 import com.playket.model.Usuario;
 import com.playket.view.VentanaCuadroEliminacion;
+import com.playket.view.VentanaDesignarCoOrganizador;
 import com.playket.view.VentanaInicio;
 import com.playket.view.VentanaRegistrarResultado;
 
@@ -50,6 +51,7 @@ public class CuadroEliminacionController {
     private void inicializarEventos() {
         vista.getBtnVolver().addActionListener(e -> volver());
         vista.getBtnRegistrarResultado().addActionListener(e -> registrarResultado());
+        vista.getBtnCoOrganizador().addActionListener(e -> abrirCoOrganizador());
     }
 
     private void registrarResultado() {
@@ -75,5 +77,12 @@ public class CuadroEliminacionController {
         VentanaInicio ventanaInicio = new VentanaInicio(usuarioActual);
         new InicioController(ventanaInicio, usuarioActual);
         ventanaInicio.setVisible(true);
+    }
+
+    private void abrirCoOrganizador() {
+        vista.dispose();
+        VentanaDesignarCoOrganizador ventana = new VentanaDesignarCoOrganizador(torneo);
+        new DesignarCoOrganizadorController(ventana, torneo, usuarioActual);
+        ventana.setVisible(true);
     }
 }

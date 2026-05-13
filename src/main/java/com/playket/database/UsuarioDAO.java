@@ -71,4 +71,19 @@ public class UsuarioDAO {
                 rs.getDate("fecha_registro").toLocalDate()
         );
     }
+
+    public List<String> listarEmailsCoOrganizadores(int idTorneo) {
+        List<String> emails = new ArrayList<>();
+        String sql = "SELECT u.email FROM USUARIO u " +
+                "INNER JOIN ROL_TORNEO r ON u.id = r.id_usuario " +
+                "WHERE r.id_torneo = ?";
+        try (PreparedStatement ps = ConexionDB.getConexion().prepareStatement(sql)) {
+            ps.setInt(1, idTorneo);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) emails.add(rs.getString("email"));
+        } catch (SQLException e) {
+            System.err.println("Error al listar co-organizadores: " + e.getMessage());
+        }
+        return emails;
+    }
 }
