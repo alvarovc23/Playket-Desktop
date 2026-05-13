@@ -99,10 +99,15 @@ public class VentanaClasificacionLiga extends JFrame {
     public void cargarClasificacion(java.util.List<Object[]> filas) {
         modeloClasificacion.setRowCount(0);
         int pos = 1;
-        for (Object[] fila : filas) {
+        for(Object[] fila : filas) {
             Object[] row = new Object[7];
             row[0] = pos++;
-            System.arraycopy(fila, 0, row, 1, fila.length);
+            row[1] = fila[0];
+            row[2] = fila[1];
+            row[3] = fila[2];
+            row[4] = fila[3];
+            row[5] = fila[4];
+            row[6] = fila[5];
             modeloClasificacion.addRow(row);
         }
     }

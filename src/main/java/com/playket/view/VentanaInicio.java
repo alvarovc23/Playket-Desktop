@@ -10,12 +10,17 @@ import java.util.List;
 
 public class VentanaInicio extends JFrame {
 
+    // Interfaz sencilla para detectar cuando se pulsa un torneo
+    public interface OnTorneoClick {
+        void torneoSeleccionado(Torneo torneo);
+    }
+
     private final Usuario usuarioActual;
     private JPanel panelMisTorneos;
     private JButton btnCrearTorneo;
     private JButton btnBuscar;
     private JButton btnPerfil;
-    private java.util.function.Consumer<Torneo> torneoClickListener;
+    private OnTorneoClick torneoClickListener;
 
     public VentanaInicio(Usuario usuarioActual) {
         this.usuarioActual = usuarioActual;
@@ -50,7 +55,6 @@ public class VentanaInicio extends JFrame {
         panelContenido.setBackground(EstiloApp.GRIS_CLARO);
         panelContenido.setBorder(new EmptyBorder(15, 15, 15, 15));
 
-        // Sección mis torneos
         JLabel lblMisTorneos = new JLabel("Mis torneos");
         lblMisTorneos.setFont(EstiloApp.FUENTE_SUBTITULO);
         lblMisTorneos.setForeground(EstiloApp.AZUL_OSCURO);
@@ -81,19 +85,20 @@ public class VentanaInicio extends JFrame {
         panelPrincipal.add(cabecera, BorderLayout.NORTH);
         panelPrincipal.add(new JScrollPane(panelContenido), BorderLayout.CENTER);
         panelPrincipal.add(panelBottom, BorderLayout.SOUTH);
-
         add(panelPrincipal);
     }
 
     public void cargarMisTorneos(List<Torneo> torneos) {
         panelMisTorneos.removeAll();
-        if (torneos.isEmpty()) {
+        if(torneos.isEmpty()) {
             JLabel lbl = new JLabel("No tienes torneos creados todavía");
             lbl.setFont(EstiloApp.FUENTE_NORMAL);
             lbl.setForeground(EstiloApp.GRIS_TEXTO);
             panelMisTorneos.add(lbl);
         } else {
-            for (Torneo t : torneos) panelMisTorneos.add(crearFilaTorneo(t));
+            for(Torneo t : torneos) {
+                panelMisTorneos.add(crearFilaTorneo(t));
+            }
         }
         panelMisTorneos.revalidate();
         panelMisTorneos.repaint();
@@ -110,7 +115,6 @@ public class VentanaInicio extends JFrame {
 
         JLabel nombre = new JLabel(t.getNombre());
         nombre.setFont(EstiloApp.FUENTE_NORMAL);
-
         JLabel estado = new JLabel(t.getEstado());
         estado.setFont(EstiloApp.FUENTE_PEQUEÑA);
         estado.setForeground(EstiloApp.GRIS_TEXTO);
@@ -118,9 +122,12 @@ public class VentanaInicio extends JFrame {
         fila.add(nombre, BorderLayout.WEST);
         fila.add(estado, BorderLayout.EAST);
         fila.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
         fila.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent e) {
-                if (torneoClickListener != null) torneoClickListener.accept(t);
+                if(torneoClickListener != null) {
+                    torneoClickListener.torneoSeleccionado(t);
+                }
             }
             public void mouseEntered(java.awt.event.MouseEvent e) {
                 fila.setBackground(EstiloApp.AZUL_SEL);
@@ -132,7 +139,7 @@ public class VentanaInicio extends JFrame {
         return fila;
     }
 
-    public void setTorneoClickListener(java.util.function.Consumer<Torneo> listener) {
+    public void setTorneoClickListener(OnTorneoClick listener) {
         this.torneoClickListener = listener;
     }
 

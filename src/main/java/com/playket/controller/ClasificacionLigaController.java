@@ -43,7 +43,7 @@ public class ClasificacionLigaController {
     }
 
     private void cargarClasificacion(List<Participante> participantes) {
-        Map<Integer, EstadisticaLiga> stats = new LinkedHashMap<>();
+        Map<Integer, EstadisticaLiga> stats = new HashMap<>();
         for (Participante p : participantes) {
             stats.put(p.getId(), new EstadisticaLiga(p.getNombre()));
         }
@@ -98,8 +98,18 @@ public class ClasificacionLigaController {
         for (Partido p : partidos) {
             Participante local = mapaParticipantes.get(p.getIdLocal());
             Participante visitante = mapaParticipantes.get(p.getIdVisitante());
-            String nombreLocal = local != null ? local.getNombre() : "?";
-            String nombreVisitante = visitante != null ? visitante.getNombre() : "?";
+            String nombreLocal;
+            if(local != null) {
+                nombreLocal = local.getNombre();
+            } else {
+                nombreLocal = "?";
+            }
+            String nombreVisitante;
+            if(visitante != null) {
+                nombreVisitante = visitante.getNombre();
+            } else {
+                nombreVisitante = "?";
+            }
             filas.add(new Object[]{nombreLocal, nombreVisitante, p.getEstado()});
             ids.add(new int[]{p.getId(), p.getIdLocal(), p.getIdVisitante()});
         }

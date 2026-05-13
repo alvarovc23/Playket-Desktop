@@ -50,7 +50,11 @@ public class LoginController {
 
         if(usuario == null || !password.equals(usuario.getPassword())) {
             registrarIntentoFallido(email);
-            int restantes = MAX_INTENTOS - intentosFallidos.getOrDefault(email, 0);
+            int intentosActuales = 0;
+            if(intentosFallidos.containsKey(email)) {
+                intentosActuales = intentosFallidos.get(email);
+            }
+            int restantes = MAX_INTENTOS - intentosActuales;
             if(restantes <= 0) {
                 vista.setMensaje("Acceso bloqueado 5 min por intentos fallidos");
             } else {
@@ -79,7 +83,10 @@ public class LoginController {
     }
 
     private void registrarIntentoFallido(String email) {
-        int intentos = intentosFallidos.getOrDefault(email, 0) + 1;
+        int intentos = 1;
+        if(intentosFallidos.containsKey(email)) {
+            intentos = intentosFallidos.get(email) + 1;
+        }
         intentosFallidos.put(email, intentos);
         if(intentos >= MAX_INTENTOS) {
             tiempoBloqueo.put(email, LocalDateTime.now());
