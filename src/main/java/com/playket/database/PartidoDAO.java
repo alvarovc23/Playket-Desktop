@@ -70,4 +70,15 @@ public class PartidoDAO {
         p.setIdGanador(rs.wasNull() ? null : ganador);
         return p;
     }
+
+    public boolean eliminarPorTorneo(int idTorneo) {
+        String sql = "DELETE FROM PARTIDO WHERE id_torneo = ?";
+        try (PreparedStatement ps = ConexionDB.getConexion().prepareStatement(sql)) {
+            ps.setInt(1, idTorneo);
+            return ps.executeUpdate() >= 0;
+        } catch (SQLException e) {
+            System.err.println("Error al eliminar partidos: " + e.getMessage());
+            return false;
+        }
+    }
 }

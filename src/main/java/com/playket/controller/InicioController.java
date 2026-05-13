@@ -54,9 +54,15 @@ public class InicioController {
 
     private void abrirTorneo(Torneo torneo) {
         vista.dispose();
-        VentanaCuadroEliminacion ventana = new VentanaCuadroEliminacion(torneo);
-        new CuadroEliminacionController(ventana, torneo, usuarioActual);
-        ventana.setVisible(true);
+        if (torneo.getFormato().equals("ELIMINACION")) {
+            VentanaCuadroEliminacion ventana = new VentanaCuadroEliminacion(torneo);
+            new CuadroEliminacionController(ventana, torneo, usuarioActual);
+            ventana.setVisible(true);
+        } else {
+            VentanaClasificacionLiga ventana = new VentanaClasificacionLiga(torneo);
+            new ClasificacionLigaController(ventana, torneo, usuarioActual);
+            ventana.setVisible(true);
+        }
     }
 
     private void abrirBuscar() {

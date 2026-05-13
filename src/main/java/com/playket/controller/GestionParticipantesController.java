@@ -5,6 +5,7 @@ import com.playket.model.Participante;
 import com.playket.model.Torneo;
 import com.playket.model.Usuario;
 import com.playket.util.GeneradorCuadro;
+import com.playket.util.GeneradorLiga;
 import com.playket.view.VentanaGestionParticipantes;
 import com.playket.view.VentanaInicio;
 
@@ -96,11 +97,18 @@ public class GestionParticipantesController {
                 "Confirmar",
                 JOptionPane.YES_NO_OPTION
         );
-
         if (confirmacion != JOptionPane.YES_OPTION) return;
 
-        GeneradorCuadro generador = new GeneradorCuadro();
-        if (generador.generarEliminacion(torneo, participantes)) {
+        boolean exito;
+        if (torneo.getFormato().equals("ELIMINACION")) {
+            GeneradorCuadro generador = new GeneradorCuadro();
+            exito = generador.generarEliminacion(torneo, participantes);
+        } else {
+            GeneradorLiga generador = new GeneradorLiga();
+            exito = generador.generarCalendario(torneo, participantes);
+        }
+
+        if (exito) {
             JOptionPane.showMessageDialog(vista, "¡Cuadro generado correctamente!");
             vista.dispose();
             VentanaInicio ventanaInicio = new VentanaInicio(usuarioActual);
