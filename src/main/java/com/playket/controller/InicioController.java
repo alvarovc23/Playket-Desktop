@@ -3,10 +3,7 @@ package com.playket.controller;
 import com.playket.database.TorneoDAO;
 import com.playket.model.Torneo;
 import com.playket.model.Usuario;
-import com.playket.view.VentanaBuscarTorneos;
-import com.playket.view.VentanaCrearTorneo;
-import com.playket.view.VentanaInicio;
-import com.playket.view.VentanaCuadroEliminacion;
+import com.playket.view.*;
 
 import java.util.List;
 
@@ -28,6 +25,7 @@ public class InicioController {
         vista.getBtnCrearTorneo().addActionListener(e -> abrirCrearTorneo());
         vista.getBtnBuscar().addActionListener(e -> abrirBuscar());
         vista.setTorneoClickListener(torneo -> abrirTorneo(torneo));
+        vista.getBtnPerfil().addActionListener(e -> abrirPerfil());
     }
 
     private void cargarDatos() {
@@ -55,5 +53,12 @@ public class InicioController {
         VentanaBuscarTorneos ventanaBuscar = new VentanaBuscarTorneos();
         new BuscarTorneosController(ventanaBuscar, usuarioActual);
         ventanaBuscar.setVisible(true);
+    }
+
+    private void abrirPerfil() {
+        vista.dispose();
+        VentanaPerfil ventanaPerfil = new VentanaPerfil(usuarioActual);
+        new PerfilController(ventanaPerfil, usuarioActual);
+        ventanaPerfil.setVisible(true);
     }
 }
