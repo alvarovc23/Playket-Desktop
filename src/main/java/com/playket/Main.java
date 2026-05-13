@@ -7,7 +7,7 @@ import javax.swing.UIManager;
 
 public class Main {
     public static void main(String[] args) {
-        // Activamos Nimbus igual que en el proyecto del instituto
+        //Activo el uso de Nimbus para el diseño de las ventanas
         try {
             UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
         } catch (Exception e) {

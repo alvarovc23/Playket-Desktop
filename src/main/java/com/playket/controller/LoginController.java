@@ -6,23 +6,23 @@ import com.playket.view.VentanaInicio;
 import com.playket.view.VentanaLogin;
 import com.playket.view.VentanaRecuperarPassword;
 import com.playket.view.VentanaRegistro;
+
 import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.Map;
 
 public class LoginController {
 
     private final VentanaLogin vista;
-    private final UsuarioDAO usuarioDAO;
+    private UsuarioDAO usuarioDAO;
 
     private static final int MAX_INTENTOS = 3;
     private static final int MINUTOS_BLOQUEO = 5;
-    private final Map<String, Integer> intentosFallidos = new HashMap<>();
-    private final Map<String, LocalDateTime> tiempoBloqueo = new HashMap<>();
+    private HashMap<String, Integer> intentosFallidos = new HashMap<>();
+    private HashMap<String, LocalDateTime> tiempoBloqueo = new HashMap<>();
 
     public LoginController(VentanaLogin vista) {
         this.vista = vista;
-        this.usuarioDAO = new UsuarioDAO();
+        usuarioDAO = new UsuarioDAO();
         inicializarEventos();
     }
 
@@ -36,21 +36,22 @@ public class LoginController {
         String email = vista.getEmail();
         String password = vista.getPassword();
 
-        if (email.isEmpty() || password.isEmpty()) {
+        if(email.isEmpty() || password.isEmpty()) {
             vista.setMensaje("Completa todos los campos");
             return;
         }
 
-        if (estaBloqueado(email)) {
+        if(estaBloqueado(email)) {
             vista.setMensaje("Acceso bloqueado 5 min por intentos fallidos");
             return;
         }
 
         Usuario usuario = usuarioDAO.buscarPorEmail(email);
-        if (usuario == null || !password.equals(usuario.getPassword())) {
+
+        if(usuario == null || !password.equals(usuario.getPassword())) {
             registrarIntentoFallido(email);
             int restantes = MAX_INTENTOS - intentosFallidos.getOrDefault(email, 0);
-            if (restantes <= 0) {
+            if(restantes <= 0) {
                 vista.setMensaje("Acceso bloqueado 5 min por intentos fallidos");
             } else {
                 vista.setMensaje("Credenciales incorrectas. Intentos restantes: " + restantes);
@@ -58,6 +59,7 @@ public class LoginController {
             return;
         }
 
+        //Login correcto, limpiamos contadores
         intentosFallidos.remove(email);
         tiempoBloqueo.remove(email);
         vista.setMensaje("");
@@ -65,9 +67,10 @@ public class LoginController {
     }
 
     private boolean estaBloqueado(String email) {
-        if (!tiempoBloqueo.containsKey(email)) return false;
+        if(!tiempoBloqueo.containsKey(email)) return false;
+
         LocalDateTime desbloqueo = tiempoBloqueo.get(email).plusMinutes(MINUTOS_BLOQUEO);
-        if (LocalDateTime.now().isAfter(desbloqueo)) {
+        if(LocalDateTime.now().isAfter(desbloqueo)) {
             tiempoBloqueo.remove(email);
             intentosFallidos.remove(email);
             return false;
@@ -78,7 +81,7 @@ public class LoginController {
     private void registrarIntentoFallido(String email) {
         int intentos = intentosFallidos.getOrDefault(email, 0) + 1;
         intentosFallidos.put(email, intentos);
-        if (intentos >= MAX_INTENTOS) {
+        if(intentos >= MAX_INTENTOS) {
             tiempoBloqueo.put(email, LocalDateTime.now());
         }
     }
