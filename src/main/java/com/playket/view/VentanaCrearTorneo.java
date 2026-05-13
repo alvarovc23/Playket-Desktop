@@ -1,7 +1,9 @@
 package com.playket.view;
 
 import com.playket.model.Deporte;
+import com.playket.util.EstiloApp;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.List;
 
@@ -19,7 +21,7 @@ public class VentanaCrearTorneo extends JFrame {
 
     public VentanaCrearTorneo() {
         setTitle("Playket - Nuevo torneo");
-        setSize(420, 520);
+        setSize(440, 560);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
@@ -27,76 +29,85 @@ public class VentanaCrearTorneo extends JFrame {
     }
 
     private void inicializarComponentes() {
-        JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
+        JPanel panelFondo = EstiloApp.crearPanelFondo();
+        panelFondo.setLayout(new BorderLayout());
+
+        JPanel cabecera = EstiloApp.crearCabecera("Nuevo torneo");
+
+        JPanel tarjeta = EstiloApp.crearPanelTarjeta();
+        tarjeta.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5, 0, 5, 0);
         gbc.gridwidth = 2;
 
-        // Nombre
         gbc.gridy = 0;
-        panel.add(new JLabel("Nombre *"), gbc);
-        campoNombre = new JTextField();
-        campoNombre.setPreferredSize(new Dimension(0, 30));
+        tarjeta.add(EstiloApp.crearEtiqueta("Nombre *"), gbc);
+        campoNombre = EstiloApp.crearCampoTexto();
         gbc.gridy = 1;
-        panel.add(campoNombre, gbc);
+        tarjeta.add(campoNombre, gbc);
 
-        // Deporte
         gbc.gridy = 2;
-        panel.add(new JLabel("Deporte *"), gbc);
+        tarjeta.add(EstiloApp.crearEtiqueta("Deporte *"), gbc);
         comboDeporte = new JComboBox<>();
+        comboDeporte.setFont(EstiloApp.FUENTE_NORMAL);
         gbc.gridy = 3;
-        panel.add(comboDeporte, gbc);
+        tarjeta.add(comboDeporte, gbc);
 
-        // Formato
         gbc.gridy = 4;
-        panel.add(new JLabel("Formato *"), gbc);
+        tarjeta.add(EstiloApp.crearEtiqueta("Formato *"), gbc);
         comboFormato = new JComboBox<>(new String[]{"ELIMINACION", "LIGA"});
+        comboFormato.setFont(EstiloApp.FUENTE_NORMAL);
         gbc.gridy = 5;
-        panel.add(comboFormato, gbc);
+        tarjeta.add(comboFormato, gbc);
 
-        // Número de participantes
         gbc.gridy = 6;
-        panel.add(new JLabel("Nº participantes *"), gbc);
+        tarjeta.add(EstiloApp.crearEtiqueta("Nº participantes *"), gbc);
         comboParticipantes = new JComboBox<>(new Integer[]{4, 8, 16, 32});
+        comboParticipantes.setFont(EstiloApp.FUENTE_NORMAL);
         gbc.gridy = 7;
-        panel.add(comboParticipantes, gbc);
+        tarjeta.add(comboParticipantes, gbc);
 
-        // Fecha
         gbc.gridy = 8;
-        panel.add(new JLabel("Fecha de inicio * (dd/mm/aaaa)"), gbc);
-        campoFecha = new JTextField();
-        campoFecha.setPreferredSize(new Dimension(0, 30));
+        tarjeta.add(EstiloApp.crearEtiqueta("Fecha de inicio * (dd/mm/aaaa)"), gbc);
+        campoFecha = EstiloApp.crearCampoTexto();
         gbc.gridy = 9;
-        panel.add(campoFecha, gbc);
+        tarjeta.add(campoFecha, gbc);
 
-        // Descripción
         gbc.gridy = 10;
-        panel.add(new JLabel("Descripción (opcional)"), gbc);
+        tarjeta.add(EstiloApp.crearEtiqueta("Descripción (opcional)"), gbc);
         campoDescripcion = new JTextArea(3, 20);
+        campoDescripcion.setFont(EstiloApp.FUENTE_NORMAL);
         campoDescripcion.setLineWrap(true);
+        JScrollPane scrollDesc = new JScrollPane(campoDescripcion);
+        scrollDesc.setBorder(BorderFactory.createLineBorder(EstiloApp.GRIS_BORDE));
         gbc.gridy = 11;
-        panel.add(new JScrollPane(campoDescripcion), gbc);
+        tarjeta.add(scrollDesc, gbc);
 
-        // Mensaje
         lblMensaje = new JLabel("", SwingConstants.CENTER);
-        lblMensaje.setForeground(Color.RED);
+        lblMensaje.setForeground(EstiloApp.ROJO_ERROR);
+        lblMensaje.setFont(EstiloApp.FUENTE_PEQUEÑA);
         gbc.gridy = 12;
-        panel.add(lblMensaje, gbc);
+        tarjeta.add(lblMensaje, gbc);
 
-        // Botones
-        btnCrear = new JButton("Crear torneo →");
-        btnCrear.setPreferredSize(new Dimension(0, 36));
+        btnCrear = EstiloApp.crearBtnPrimario("Crear torneo →");
         gbc.gridy = 13;
-        panel.add(btnCrear, gbc);
+        gbc.insets = new Insets(5, 0, 4, 0);
+        tarjeta.add(btnCrear, gbc);
 
-        btnVolver = new JButton("Volver");
-        btnVolver.setPreferredSize(new Dimension(0, 36));
+        btnVolver = EstiloApp.crearBtnSecundario("Volver");
         gbc.gridy = 14;
-        panel.add(btnVolver, gbc);
+        gbc.insets = new Insets(4, 0, 0, 0);
+        tarjeta.add(btnVolver, gbc);
 
-        add(new JScrollPane(panel));
+        JPanel panelCentro = EstiloApp.crearPanelFondo();
+        panelCentro.setLayout(new GridBagLayout());
+        panelCentro.setBorder(new EmptyBorder(15, 30, 15, 30));
+        panelCentro.add(tarjeta);
+
+        panelFondo.add(cabecera, BorderLayout.NORTH);
+        panelFondo.add(new JScrollPane(panelCentro), BorderLayout.CENTER);
+        add(panelFondo);
     }
 
     public void cargarDeportes(List<Deporte> deportes) {
@@ -110,7 +121,10 @@ public class VentanaCrearTorneo extends JFrame {
     public int getNumParticipantes() { return (Integer) comboParticipantes.getSelectedItem(); }
     public String getFecha() { return campoFecha.getText().trim(); }
     public String getDescripcion() { return campoDescripcion.getText().trim(); }
-    public void setMensaje(String msg) { lblMensaje.setText(msg); }
+    public void setMensaje(String msg) {
+        lblMensaje.setForeground(EstiloApp.ROJO_ERROR);
+        lblMensaje.setText(msg);
+    }
     public JButton getBtnCrear() { return btnCrear; }
     public JButton getBtnVolver() { return btnVolver; }
 }

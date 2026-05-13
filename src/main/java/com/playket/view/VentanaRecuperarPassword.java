@@ -1,6 +1,8 @@
 package com.playket.view;
 
+import com.playket.util.EstiloApp;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 public class VentanaRecuperarPassword extends JFrame {
@@ -18,7 +20,7 @@ public class VentanaRecuperarPassword extends JFrame {
 
     public VentanaRecuperarPassword() {
         setTitle("Playket - Recuperar contraseña");
-        setSize(420, 420);
+        setSize(440, 420);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
@@ -26,33 +28,32 @@ public class VentanaRecuperarPassword extends JFrame {
     }
 
     private void inicializarComponentes() {
-        JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
+        JPanel panelFondo = EstiloApp.crearPanelFondo();
+        panelFondo.setLayout(new BorderLayout());
+
+        JPanel cabecera = EstiloApp.crearCabecera("Recuperar contraseña");
+
+        JPanel tarjeta = EstiloApp.crearPanelTarjeta();
+        tarjeta.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5, 0, 5, 0);
         gbc.gridwidth = 2;
 
-        JLabel lblTitulo = new JLabel("Recuperar contraseña", SwingConstants.CENTER);
-        lblTitulo.setFont(new Font("Arial", Font.BOLD, 18));
-        gbc.gridy = 0;
-        panel.add(lblTitulo, gbc);
-
         // Primer paso — email
+        gbc.gridy = 0;
+        tarjeta.add(EstiloApp.crearEtiqueta("Correo electrónico"), gbc);
+        campoEmail = EstiloApp.crearCampoTexto();
         gbc.gridy = 1;
-        panel.add(new JLabel("Correo electrónico"), gbc);
-        campoEmail = new JTextField();
-        campoEmail.setPreferredSize(new Dimension(0, 30));
+        tarjeta.add(campoEmail, gbc);
+
+        btnComprobar = EstiloApp.crearBtnPrimario("Comprobar");
         gbc.gridy = 2;
-        panel.add(campoEmail, gbc);
+        tarjeta.add(btnComprobar, gbc);
 
-        btnComprobar = new JButton("Comprobar");
-        btnComprobar.setPreferredSize(new Dimension(0, 34));
-        gbc.gridy = 3;
-        panel.add(btnComprobar, gbc);
-
-        // Segundo paso — pregunta y nueva contraseña (oculto inicialmente)
+        // Segundo paso — oculto inicialmente
         panelSegundoPaso = new JPanel(new GridBagLayout());
+        panelSegundoPaso.setBackground(EstiloApp.BLANCO);
         panelSegundoPaso.setVisible(false);
         GridBagConstraints gbc2 = new GridBagConstraints();
         gbc2.fill = GridBagConstraints.HORIZONTAL;
@@ -60,52 +61,57 @@ public class VentanaRecuperarPassword extends JFrame {
         gbc2.gridwidth = 2;
 
         lblPregunta = new JLabel("");
-        lblPregunta.setFont(new Font("Arial", Font.BOLD, 13));
+        lblPregunta.setFont(EstiloApp.FUENTE_SUBTITULO);
+        lblPregunta.setForeground(EstiloApp.AZUL_OSCURO);
         gbc2.gridy = 0;
         panelSegundoPaso.add(lblPregunta, gbc2);
 
         gbc2.gridy = 1;
-        panelSegundoPaso.add(new JLabel("Respuesta"), gbc2);
-        campoRespuesta = new JTextField();
-        campoRespuesta.setPreferredSize(new Dimension(0, 30));
+        panelSegundoPaso.add(EstiloApp.crearEtiqueta("Respuesta"), gbc2);
+        campoRespuesta = EstiloApp.crearCampoTexto();
         gbc2.gridy = 2;
         panelSegundoPaso.add(campoRespuesta, gbc2);
 
         gbc2.gridy = 3;
-        panelSegundoPaso.add(new JLabel("Nueva contraseña (mín. 8 caracteres)"), gbc2);
-        campoPasswordNueva = new JPasswordField();
-        campoPasswordNueva.setPreferredSize(new Dimension(0, 30));
+        panelSegundoPaso.add(EstiloApp.crearEtiqueta("Nueva contraseña (mín. 8 caracteres)"), gbc2);
+        campoPasswordNueva = EstiloApp.crearCampoPassword();
         gbc2.gridy = 4;
         panelSegundoPaso.add(campoPasswordNueva, gbc2);
 
         gbc2.gridy = 5;
-        panelSegundoPaso.add(new JLabel("Confirmar nueva contraseña"), gbc2);
-        campoConfirmarPassword = new JPasswordField();
-        campoConfirmarPassword.setPreferredSize(new Dimension(0, 30));
+        panelSegundoPaso.add(EstiloApp.crearEtiqueta("Confirmar nueva contraseña"), gbc2);
+        campoConfirmarPassword = EstiloApp.crearCampoPassword();
         gbc2.gridy = 6;
         panelSegundoPaso.add(campoConfirmarPassword, gbc2);
 
-        btnCambiarPassword = new JButton("Cambiar contraseña");
-        btnCambiarPassword.setPreferredSize(new Dimension(0, 34));
+        btnCambiarPassword = EstiloApp.crearBtnPrimario("Cambiar contraseña");
         gbc2.gridy = 7;
         panelSegundoPaso.add(btnCambiarPassword, gbc2);
 
-        gbc.gridy = 4;
-        panel.add(panelSegundoPaso, gbc);
+        gbc.gridy = 3;
+        tarjeta.add(panelSegundoPaso, gbc);
 
         // Mensaje
         lblMensaje = new JLabel("", SwingConstants.CENTER);
-        lblMensaje.setForeground(Color.RED);
-        gbc.gridy = 5;
-        panel.add(lblMensaje, gbc);
+        lblMensaje.setForeground(EstiloApp.ROJO_ERROR);
+        lblMensaje.setFont(EstiloApp.FUENTE_PEQUEÑA);
+        gbc.gridy = 4;
+        tarjeta.add(lblMensaje, gbc);
 
         // Volver
-        btnVolver = new JButton("Volver");
-        btnVolver.setPreferredSize(new Dimension(0, 34));
-        gbc.gridy = 6;
-        panel.add(btnVolver, gbc);
+        btnVolver = EstiloApp.crearBtnSecundario("Volver");
+        gbc.gridy = 5;
+        gbc.insets = new Insets(4, 0, 0, 0);
+        tarjeta.add(btnVolver, gbc);
 
-        add(new JScrollPane(panel));
+        JPanel panelCentro = EstiloApp.crearPanelFondo();
+        panelCentro.setLayout(new GridBagLayout());
+        panelCentro.setBorder(new EmptyBorder(15, 30, 15, 30));
+        panelCentro.add(tarjeta);
+
+        panelFondo.add(cabecera, BorderLayout.NORTH);
+        panelFondo.add(new JScrollPane(panelCentro), BorderLayout.CENTER);
+        add(panelFondo);
     }
 
     public void mostrarSegundoPaso(String pregunta) {
@@ -120,11 +126,11 @@ public class VentanaRecuperarPassword extends JFrame {
     public String getPasswordNueva() { return new String(campoPasswordNueva.getPassword()); }
     public String getConfirmarPassword() { return new String(campoConfirmarPassword.getPassword()); }
     public void setMensaje(String msg) {
-        lblMensaje.setForeground(Color.RED);
+        lblMensaje.setForeground(EstiloApp.ROJO_ERROR);
         lblMensaje.setText(msg);
     }
     public void setMensajeVerde(String msg) {
-        lblMensaje.setForeground(Color.GREEN.darker());
+        lblMensaje.setForeground(EstiloApp.VERDE_EXITO);
         lblMensaje.setText(msg);
     }
     public JButton getBtnComprobar() { return btnComprobar; }

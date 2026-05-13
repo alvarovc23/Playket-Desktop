@@ -3,7 +3,9 @@ package com.playket.view;
 import com.playket.model.Participante;
 import com.playket.model.Partido;
 import com.playket.model.Torneo;
+import com.playket.util.EstiloApp;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.List;
 import java.util.Map;
@@ -20,43 +22,59 @@ public class VentanaCuadroEliminacion extends JFrame {
     public VentanaCuadroEliminacion(Torneo torneo) {
         this.torneo = torneo;
         setTitle("Playket - " + torneo.getNombre());
-        setSize(600, 500);
+        setSize(620, 520);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         inicializarComponentes();
     }
 
     private void inicializarComponentes() {
-        JPanel panelPrincipal = new JPanel(new BorderLayout(10, 10));
-        panelPrincipal.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+        JPanel panelPrincipal = new JPanel(new BorderLayout(0, 10));
+        panelPrincipal.setBackground(EstiloApp.GRIS_CLARO);
 
         // Cabecera
-        JPanel panelCabecera = new JPanel(new BorderLayout());
-        JLabel lblTitulo = new JLabel(torneo.getNombre(), SwingConstants.LEFT);
-        lblTitulo.setFont(new Font("Arial", Font.BOLD, 18));
-        JLabel lblInfo = new JLabel("Eliminación | " + torneo.getEstado(), SwingConstants.LEFT);
-        lblInfo.setForeground(Color.GRAY);
-        panelCabecera.add(lblTitulo, BorderLayout.NORTH);
-        panelCabecera.add(lblInfo, BorderLayout.SOUTH);
+        JPanel cabecera = new JPanel(new BorderLayout());
+        cabecera.setBackground(EstiloApp.AZUL_OSCURO);
+        cabecera.setPreferredSize(new Dimension(0, 65));
+        cabecera.setBorder(new EmptyBorder(0, 15, 0, 15));
+        JLabel lblTitulo = new JLabel(torneo.getNombre());
+        lblTitulo.setFont(EstiloApp.FUENTE_TITULO);
+        lblTitulo.setForeground(EstiloApp.BLANCO);
+        JLabel lblInfo = new JLabel("Eliminación | " + torneo.getEstado());
+        lblInfo.setFont(EstiloApp.FUENTE_PEQUEÑA);
+        lblInfo.setForeground(new Color(200, 200, 200));
+        JPanel panelTextos = new JPanel(new GridLayout(2, 1));
+        panelTextos.setBackground(EstiloApp.AZUL_OSCURO);
+        panelTextos.add(lblTitulo);
+        panelTextos.add(lblInfo);
+        cabecera.add(panelTextos, BorderLayout.CENTER);
 
-        // Panel cuadro con scroll horizontal
+        // Panel cuadro
         panelCuadro = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 10));
+        panelCuadro.setBackground(EstiloApp.BLANCO);
         JScrollPane scroll = new JScrollPane(panelCuadro);
         scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scroll.setBorder(BorderFactory.createLineBorder(EstiloApp.GRIS_BORDE));
 
         // Botones inferiores
         JPanel panelBotones = new JPanel(new GridLayout(1, 3, 10, 0));
-        btnRegistrarResultado = new JButton("Registrar resultado");
-        btnCerrarTorneo = new JButton("Cerrar torneo");
-        btnVolver = new JButton("Volver");
+        panelBotones.setBackground(EstiloApp.GRIS_CLARO);
+        panelBotones.setBorder(new EmptyBorder(0, 15, 15, 15));
+        btnRegistrarResultado = EstiloApp.crearBtnPrimario("Registrar resultado");
+        btnCerrarTorneo = EstiloApp.crearBtnPeligro("Cerrar torneo");
+        btnVolver = EstiloApp.crearBtnSecundario("Volver");
         panelBotones.add(btnRegistrarResultado);
         panelBotones.add(btnCerrarTorneo);
         panelBotones.add(btnVolver);
 
-        panelPrincipal.add(panelCabecera, BorderLayout.NORTH);
-        panelPrincipal.add(scroll, BorderLayout.CENTER);
-        panelPrincipal.add(panelBotones, BorderLayout.SOUTH);
+        JPanel panelCentro = new JPanel(new BorderLayout());
+        panelCentro.setBackground(EstiloApp.GRIS_CLARO);
+        panelCentro.setBorder(new EmptyBorder(10, 15, 0, 15));
+        panelCentro.add(scroll, BorderLayout.CENTER);
 
+        panelPrincipal.add(cabecera, BorderLayout.NORTH);
+        panelPrincipal.add(panelCentro, BorderLayout.CENTER);
+        panelPrincipal.add(panelBotones, BorderLayout.SOUTH);
         add(panelPrincipal);
     }
 
@@ -65,7 +83,11 @@ public class VentanaCuadroEliminacion extends JFrame {
 
         JPanel ronda = new JPanel();
         ronda.setLayout(new BoxLayout(ronda, BoxLayout.Y_AXIS));
-        ronda.setBorder(BorderFactory.createTitledBorder("Ronda 1"));
+        ronda.setBackground(EstiloApp.BLANCO);
+        ronda.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(EstiloApp.AZUL_OSCURO),
+                "Ronda 1"
+        ));
 
         for (Partido p : partidos) {
             JPanel panelPartido = crearPanelPartido(p, mapaParticipantes);
@@ -74,9 +96,15 @@ public class VentanaCuadroEliminacion extends JFrame {
                     partidoSeleccionado = p;
                     panelCuadro.repaint();
                 }
+                public void mouseEntered(java.awt.event.MouseEvent e) {
+                    panelPartido.setBackground(EstiloApp.AZUL_SEL);
+                }
+                public void mouseExited(java.awt.event.MouseEvent e) {
+                    panelPartido.setBackground(EstiloApp.BLANCO);
+                }
             });
             ronda.add(panelPartido);
-            ronda.add(Box.createRigidArea(new Dimension(0, 8)));
+            ronda.add(Box.createRigidArea(new Dimension(0, 6)));
         }
 
         panelCuadro.add(ronda);
@@ -86,9 +114,9 @@ public class VentanaCuadroEliminacion extends JFrame {
 
     private JPanel crearPanelPartido(Partido p, Map<Integer, Participante> mapaParticipantes) {
         JPanel panel = new JPanel(new GridLayout(2, 1, 2, 2));
-        panel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
-        panel.setPreferredSize(new Dimension(180, 60));
-        panel.setBackground(Color.WHITE);
+        panel.setBorder(BorderFactory.createLineBorder(EstiloApp.GRIS_BORDE));
+        panel.setPreferredSize(new Dimension(190, 64));
+        panel.setBackground(EstiloApp.BLANCO);
 
         Participante local = mapaParticipantes.get(p.getIdLocal());
         Participante visitante = mapaParticipantes.get(p.getIdVisitante());
@@ -97,15 +125,19 @@ public class VentanaCuadroEliminacion extends JFrame {
         String nombreVisitante = visitante != null ? visitante.getNombre() : "TBD";
 
         JLabel lblLocal = new JLabel("  " + nombreLocal);
+        lblLocal.setFont(EstiloApp.FUENTE_NORMAL);
         JLabel lblVisitante = new JLabel("  " + nombreVisitante);
+        lblVisitante.setFont(EstiloApp.FUENTE_NORMAL);
 
         if (p.getIdGanador() != null) {
             if (p.getIdGanador() == p.getIdLocal()) {
-                lblLocal.setFont(new Font("Arial", Font.BOLD, 12));
-                lblVisitante.setForeground(Color.GRAY);
+                lblLocal.setFont(EstiloApp.FUENTE_SUBTITULO);
+                lblLocal.setForeground(EstiloApp.AZUL_OSCURO);
+                lblVisitante.setForeground(EstiloApp.GRIS_TEXTO);
             } else {
-                lblVisitante.setFont(new Font("Arial", Font.BOLD, 12));
-                lblLocal.setForeground(Color.GRAY);
+                lblVisitante.setFont(EstiloApp.FUENTE_SUBTITULO);
+                lblVisitante.setForeground(EstiloApp.AZUL_OSCURO);
+                lblLocal.setForeground(EstiloApp.GRIS_TEXTO);
             }
         }
 
@@ -117,6 +149,6 @@ public class VentanaCuadroEliminacion extends JFrame {
     public Partido getPartidoSeleccionado() { return partidoSeleccionado; }
     public JButton getBtnVolver() { return btnVolver; }
     public JButton getBtnRegistrarResultado() { return btnRegistrarResultado; }
-    public Torneo getTorneo() { return torneo; }
     public JButton getBtnCerrarTorneo() { return btnCerrarTorneo; }
+    public Torneo getTorneo() { return torneo; }
 }

@@ -2,7 +2,9 @@ package com.playket.view;
 
 import com.playket.model.Participante;
 import com.playket.model.Partido;
+import com.playket.util.EstiloApp;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.Map;
 
@@ -17,7 +19,7 @@ public class VentanaRegistrarResultado extends JFrame {
     public VentanaRegistrarResultado(Partido partido, Map<Integer, Participante> mapaParticipantes) {
         this.partido = partido;
         setTitle("Playket - Registrar resultado");
-        setSize(400, 280);
+        setSize(420, 300);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
@@ -25,17 +27,20 @@ public class VentanaRegistrarResultado extends JFrame {
     }
 
     private void inicializarComponentes(Map<Integer, Participante> mapaParticipantes) {
-        JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
+        JPanel panelPrincipal = new JPanel(new BorderLayout());
+        panelPrincipal.setBackground(EstiloApp.GRIS_CLARO);
+
+        // Cabecera
+        JPanel cabecera = EstiloApp.crearCabecera("¿Quién ha ganado?");
+
+        // Panel central
+        JPanel panelCentro = new JPanel(new GridBagLayout());
+        panelCentro.setBackground(EstiloApp.GRIS_CLARO);
+        panelCentro.setBorder(new EmptyBorder(20, 30, 10, 30));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(8, 5, 8, 5);
-        gbc.gridwidth = 2;
-
-        JLabel lblTitulo = new JLabel("¿Quién ha ganado?", SwingConstants.CENTER);
-        lblTitulo.setFont(new Font("Arial", Font.BOLD, 16));
-        gbc.gridy = 0;
-        panel.add(lblTitulo, gbc);
+        gbc.insets = new Insets(8, 8, 8, 8);
+        gbc.weightx = 0.5;
 
         Participante local = mapaParticipantes.get(partido.getIdLocal());
         Participante visitante = mapaParticipantes.get(partido.getIdVisitante());
@@ -43,31 +48,47 @@ public class VentanaRegistrarResultado extends JFrame {
         String nombreLocal = local != null ? local.getNombre() : "Local";
         String nombreVisitante = visitante != null ? visitante.getNombre() : "Visitante";
 
-        gbc.gridwidth = 1;
-        gbc.weightx = 0.5;
-
+        // Botones de equipos grandes
         btnLocal = new JButton(nombreLocal);
-        btnLocal.setPreferredSize(new Dimension(0, 60));
-        btnLocal.setFont(new Font("Arial", Font.BOLD, 14));
-        gbc.gridx = 0; gbc.gridy = 1;
-        panel.add(btnLocal, gbc);
+        btnLocal.setBackground(EstiloApp.AZUL_OSCURO);
+        btnLocal.setForeground(EstiloApp.BLANCO);
+        btnLocal.setFont(EstiloApp.FUENTE_SUBTITULO);
+        btnLocal.setFocusPainted(false);
+        btnLocal.setBorder(new EmptyBorder(15, 20, 15, 20));
+        btnLocal.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnLocal.setPreferredSize(new Dimension(0, 70));
 
         btnVisitante = new JButton(nombreVisitante);
-        btnVisitante.setPreferredSize(new Dimension(0, 60));
-        btnVisitante.setFont(new Font("Arial", Font.BOLD, 14));
-        gbc.gridx = 1; gbc.gridy = 1;
-        panel.add(btnVisitante, gbc);
+        btnVisitante.setBackground(EstiloApp.NARANJA);
+        btnVisitante.setForeground(EstiloApp.BLANCO);
+        btnVisitante.setFont(EstiloApp.FUENTE_SUBTITULO);
+        btnVisitante.setFocusPainted(false);
+        btnVisitante.setBorder(new EmptyBorder(15, 20, 15, 20));
+        btnVisitante.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnVisitante.setPreferredSize(new Dimension(0, 70));
+
+        gbc.gridx = 0; gbc.gridy = 0;
+        panelCentro.add(btnLocal, gbc);
+        gbc.gridx = 1;
+        panelCentro.add(btnVisitante, gbc);
 
         lblMensaje = new JLabel("", SwingConstants.CENTER);
-        lblMensaje.setForeground(Color.RED);
-        gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 2;
-        panel.add(lblMensaje, gbc);
+        lblMensaje.setForeground(EstiloApp.ROJO_ERROR);
+        lblMensaje.setFont(EstiloApp.FUENTE_PEQUEÑA);
+        gbc.gridx = 0; gbc.gridy = 1; gbc.gridwidth = 2;
+        panelCentro.add(lblMensaje, gbc);
 
-        btnVolver = new JButton("Volver");
-        gbc.gridy = 3;
-        panel.add(btnVolver, gbc);
+        // Botón volver
+        JPanel panelBotones = new JPanel(new GridLayout(1, 1));
+        panelBotones.setBackground(EstiloApp.GRIS_CLARO);
+        panelBotones.setBorder(new EmptyBorder(0, 30, 15, 30));
+        btnVolver = EstiloApp.crearBtnSecundario("Volver");
+        panelBotones.add(btnVolver);
 
-        add(panel);
+        panelPrincipal.add(cabecera, BorderLayout.NORTH);
+        panelPrincipal.add(panelCentro, BorderLayout.CENTER);
+        panelPrincipal.add(panelBotones, BorderLayout.SOUTH);
+        add(panelPrincipal);
     }
 
     public void setMensaje(String msg) { lblMensaje.setText(msg); }

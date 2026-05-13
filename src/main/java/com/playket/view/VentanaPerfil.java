@@ -1,7 +1,9 @@
 package com.playket.view;
 
 import com.playket.model.Usuario;
+import com.playket.util.EstiloApp;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 public class VentanaPerfil extends JFrame {
@@ -19,7 +21,7 @@ public class VentanaPerfil extends JFrame {
     public VentanaPerfil(Usuario usuario) {
         this.usuario = usuario;
         setTitle("Playket - Perfil");
-        setSize(420, 420);
+        setSize(440, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
@@ -27,91 +29,98 @@ public class VentanaPerfil extends JFrame {
     }
 
     private void inicializarComponentes() {
-        JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
+        JPanel panelFondo = EstiloApp.crearPanelFondo();
+        panelFondo.setLayout(new BorderLayout());
+
+        JPanel cabecera = EstiloApp.crearCabecera("Mi perfil");
+
+        JPanel tarjeta = EstiloApp.crearPanelTarjeta();
+        tarjeta.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5, 0, 5, 0);
         gbc.gridwidth = 2;
 
-        // Título
-        JLabel lblTitulo = new JLabel("Mi perfil", SwingConstants.CENTER);
-        lblTitulo.setFont(new Font("Arial", Font.BOLD, 18));
-        gbc.gridy = 0;
-        panel.add(lblTitulo, gbc);
-
         // Email (no editable)
-        gbc.gridy = 1;
-        panel.add(new JLabel("Correo electrónico"), gbc);
+        gbc.gridy = 0;
+        tarjeta.add(EstiloApp.crearEtiqueta("Correo electrónico"), gbc);
         JTextField campoEmail = new JTextField(usuario.getEmail());
         campoEmail.setEditable(false);
-        campoEmail.setForeground(Color.GRAY);
-        campoEmail.setPreferredSize(new Dimension(0, 30));
-        gbc.gridy = 2;
-        panel.add(campoEmail, gbc);
+        campoEmail.setForeground(EstiloApp.GRIS_TEXTO);
+        campoEmail.setFont(EstiloApp.FUENTE_NORMAL);
+        campoEmail.setPreferredSize(new Dimension(0, 32));
+        gbc.gridy = 1;
+        tarjeta.add(campoEmail, gbc);
 
         // Nombre
+        gbc.gridy = 2;
+        tarjeta.add(EstiloApp.crearEtiqueta("Nombre"), gbc);
+        campoNombre = EstiloApp.crearCampoTexto();
+        campoNombre.setText(usuario.getNombre());
         gbc.gridy = 3;
-        panel.add(new JLabel("Nombre"), gbc);
-        campoNombre = new JTextField(usuario.getNombre());
-        campoNombre.setPreferredSize(new Dimension(0, 30));
-        gbc.gridy = 4;
-        panel.add(campoNombre, gbc);
+        tarjeta.add(campoNombre, gbc);
 
         // Apellidos
+        gbc.gridy = 4;
+        tarjeta.add(EstiloApp.crearEtiqueta("Apellidos"), gbc);
+        campoApellidos = EstiloApp.crearCampoTexto();
+        campoApellidos.setText(usuario.getApellidos());
         gbc.gridy = 5;
-        panel.add(new JLabel("Apellidos"), gbc);
-        campoApellidos = new JTextField(usuario.getApellidos());
-        campoApellidos.setPreferredSize(new Dimension(0, 30));
-        gbc.gridy = 6;
-        panel.add(campoApellidos, gbc);
+        tarjeta.add(campoApellidos, gbc);
 
         // Separador
-        gbc.gridy = 7;
-        panel.add(new JSeparator(), gbc);
+        gbc.gridy = 6;
+        JSeparator sep = new JSeparator();
+        sep.setForeground(EstiloApp.GRIS_BORDE);
+        tarjeta.add(sep, gbc);
 
         // Contraseña actual
+        gbc.gridy = 7;
+        tarjeta.add(EstiloApp.crearEtiqueta("Contraseña actual (solo si quieres cambiarla)"), gbc);
+        campoPasswordActual = EstiloApp.crearCampoPassword();
         gbc.gridy = 8;
-        panel.add(new JLabel("Contraseña actual (solo si quieres cambiarla)"), gbc);
-        campoPasswordActual = new JPasswordField();
-        campoPasswordActual.setPreferredSize(new Dimension(0, 30));
-        gbc.gridy = 9;
-        panel.add(campoPasswordActual, gbc);
+        tarjeta.add(campoPasswordActual, gbc);
 
         // Nueva contraseña
+        gbc.gridy = 9;
+        tarjeta.add(EstiloApp.crearEtiqueta("Nueva contraseña"), gbc);
+        campoPasswordNueva = EstiloApp.crearCampoPassword();
         gbc.gridy = 10;
-        panel.add(new JLabel("Nueva contraseña"), gbc);
-        campoPasswordNueva = new JPasswordField();
-        campoPasswordNueva.setPreferredSize(new Dimension(0, 30));
-        gbc.gridy = 11;
-        panel.add(campoPasswordNueva, gbc);
+        tarjeta.add(campoPasswordNueva, gbc);
 
         // Confirmar
+        gbc.gridy = 11;
+        tarjeta.add(EstiloApp.crearEtiqueta("Confirmar nueva contraseña"), gbc);
+        campoConfirmarPassword = EstiloApp.crearCampoPassword();
         gbc.gridy = 12;
-        panel.add(new JLabel("Confirmar nueva contraseña"), gbc);
-        campoConfirmarPassword = new JPasswordField();
-        campoConfirmarPassword.setPreferredSize(new Dimension(0, 30));
-        gbc.gridy = 13;
-        panel.add(campoConfirmarPassword, gbc);
+        tarjeta.add(campoConfirmarPassword, gbc);
 
         // Mensaje
         lblMensaje = new JLabel("", SwingConstants.CENTER);
-        lblMensaje.setForeground(Color.RED);
-        gbc.gridy = 14;
-        panel.add(lblMensaje, gbc);
+        lblMensaje.setForeground(EstiloApp.ROJO_ERROR);
+        lblMensaje.setFont(EstiloApp.FUENTE_PEQUEÑA);
+        gbc.gridy = 13;
+        tarjeta.add(lblMensaje, gbc);
 
         // Botones
-        btnGuardar = new JButton("Guardar cambios");
-        btnGuardar.setPreferredSize(new Dimension(0, 36));
+        btnGuardar = EstiloApp.crearBtnPrimario("Guardar cambios");
+        gbc.gridy = 14;
+        gbc.insets = new Insets(5, 0, 4, 0);
+        tarjeta.add(btnGuardar, gbc);
+
+        btnVolver = EstiloApp.crearBtnSecundario("Volver");
         gbc.gridy = 15;
-        panel.add(btnGuardar, gbc);
+        gbc.insets = new Insets(4, 0, 0, 0);
+        tarjeta.add(btnVolver, gbc);
 
-        btnVolver = new JButton("Volver");
-        btnVolver.setPreferredSize(new Dimension(0, 36));
-        gbc.gridy = 16;
-        panel.add(btnVolver, gbc);
+        JPanel panelCentro = EstiloApp.crearPanelFondo();
+        panelCentro.setLayout(new GridBagLayout());
+        panelCentro.setBorder(new EmptyBorder(15, 30, 15, 30));
+        panelCentro.add(tarjeta);
 
-        add(new JScrollPane(panel));
+        panelFondo.add(cabecera, BorderLayout.NORTH);
+        panelFondo.add(new JScrollPane(panelCentro), BorderLayout.CENTER);
+        add(panelFondo);
     }
 
     public String getNombre() { return campoNombre.getText().trim(); }
@@ -120,11 +129,11 @@ public class VentanaPerfil extends JFrame {
     public String getPasswordNueva() { return new String(campoPasswordNueva.getPassword()); }
     public String getConfirmarPassword() { return new String(campoConfirmarPassword.getPassword()); }
     public void setMensaje(String msg) {
-        lblMensaje.setForeground(Color.RED);
+        lblMensaje.setForeground(EstiloApp.ROJO_ERROR);
         lblMensaje.setText(msg);
     }
     public void setMensajeVerde(String msg) {
-        lblMensaje.setForeground(Color.GREEN.darker());
+        lblMensaje.setForeground(EstiloApp.VERDE_EXITO);
         lblMensaje.setText(msg);
     }
     public JButton getBtnGuardar() { return btnGuardar; }

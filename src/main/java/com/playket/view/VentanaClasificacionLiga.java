@@ -1,7 +1,9 @@
 package com.playket.view;
 
 import com.playket.model.Torneo;
+import com.playket.util.EstiloApp;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
@@ -13,36 +15,39 @@ public class VentanaClasificacionLiga extends JFrame {
     private JTable tablaClasificacion;
     private JTable tablaPartidos;
     private JButton btnRegistrarResultado;
-    private JButton btnVolver;
     private JButton btnCerrarTorneo;
+    private JButton btnVolver;
     private int idPartidoSeleccionado = -1;
-    private int idLocalSeleccionado = -1;
-    private int idVisitanteSeleccionado = -1;
 
     public VentanaClasificacionLiga(Torneo torneo) {
         this.torneo = torneo;
         setTitle("Playket - " + torneo.getNombre());
-        setSize(650, 600);
+        setSize(660, 620);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         inicializarComponentes();
     }
 
     private void inicializarComponentes() {
-        JPanel panelPrincipal = new JPanel(new BorderLayout(10, 10));
-        panelPrincipal.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+        JPanel panelPrincipal = new JPanel(new BorderLayout(0, 10));
+        panelPrincipal.setBackground(EstiloApp.GRIS_CLARO);
 
         // Cabecera
-        JPanel panelCabecera = new JPanel(new BorderLayout());
-        JLabel lblTitulo = new JLabel(torneo.getNombre(), SwingConstants.LEFT);
-        lblTitulo.setFont(new Font("Arial", Font.BOLD, 18));
-        JLabel lblInfo = new JLabel("Liga | " + torneo.getEstado(), SwingConstants.LEFT);
-        lblInfo.setForeground(Color.GRAY);
-        panelCabecera.add(lblTitulo, BorderLayout.NORTH);
-        panelCabecera.add(lblInfo, BorderLayout.SOUTH);
-
-        // Panel central con clasificación y partidos
-        JPanel panelCentral = new JPanel(new GridLayout(2, 1, 0, 10));
+        JPanel cabecera = new JPanel(new BorderLayout());
+        cabecera.setBackground(EstiloApp.AZUL_OSCURO);
+        cabecera.setPreferredSize(new Dimension(0, 65));
+        cabecera.setBorder(new EmptyBorder(0, 15, 0, 15));
+        JLabel lblTitulo = new JLabel(torneo.getNombre());
+        lblTitulo.setFont(EstiloApp.FUENTE_TITULO);
+        lblTitulo.setForeground(EstiloApp.BLANCO);
+        JLabel lblInfo = new JLabel("Liga | " + torneo.getEstado());
+        lblInfo.setFont(EstiloApp.FUENTE_PEQUEÑA);
+        lblInfo.setForeground(new Color(200, 200, 200));
+        JPanel panelTextos = new JPanel(new GridLayout(2, 1));
+        panelTextos.setBackground(EstiloApp.AZUL_OSCURO);
+        panelTextos.add(lblTitulo);
+        panelTextos.add(lblInfo);
+        cabecera.add(panelTextos, BorderLayout.CENTER);
 
         // Tabla clasificación
         modeloClasificacion = new DefaultTableModel(
@@ -50,9 +55,11 @@ public class VentanaClasificacionLiga extends JFrame {
             public boolean isCellEditable(int r, int c) { return false; }
         };
         tablaClasificacion = new JTable(modeloClasificacion);
+        EstiloApp.estilizarTabla(tablaClasificacion);
         tablaClasificacion.getColumnModel().getColumn(0).setMaxWidth(30);
-        JScrollPane scrollClasif = new JScrollPane(tablaClasificacion);
-        scrollClasif.setBorder(BorderFactory.createTitledBorder("Clasificación"));
+        JScrollPane scrollClasif = EstiloApp.crearScroll(tablaClasificacion);
+        scrollClasif.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(EstiloApp.GRIS_BORDE), "Clasificación"));
 
         // Tabla partidos
         modeloPartidos = new DefaultTableModel(
@@ -60,25 +67,32 @@ public class VentanaClasificacionLiga extends JFrame {
             public boolean isCellEditable(int r, int c) { return false; }
         };
         tablaPartidos = new JTable(modeloPartidos);
-        JScrollPane scrollPartidos = new JScrollPane(tablaPartidos);
-        scrollPartidos.setBorder(BorderFactory.createTitledBorder("Partidos"));
+        EstiloApp.estilizarTabla(tablaPartidos);
+        JScrollPane scrollPartidos = EstiloApp.crearScroll(tablaPartidos);
+        scrollPartidos.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(EstiloApp.GRIS_BORDE), "Partidos"));
 
+        // Panel central
+        JPanel panelCentral = new JPanel(new GridLayout(2, 1, 0, 10));
+        panelCentral.setBackground(EstiloApp.GRIS_CLARO);
+        panelCentral.setBorder(new EmptyBorder(10, 15, 0, 15));
         panelCentral.add(scrollClasif);
         panelCentral.add(scrollPartidos);
 
         // Botones
         JPanel panelBotones = new JPanel(new GridLayout(1, 3, 10, 0));
-        btnRegistrarResultado = new JButton("Registrar resultado");
-        btnCerrarTorneo = new JButton("Cerrar torneo");
-        btnVolver = new JButton("Volver");
+        panelBotones.setBackground(EstiloApp.GRIS_CLARO);
+        panelBotones.setBorder(new EmptyBorder(0, 15, 15, 15));
+        btnRegistrarResultado = EstiloApp.crearBtnPrimario("Registrar resultado");
+        btnCerrarTorneo = EstiloApp.crearBtnPeligro("Cerrar torneo");
+        btnVolver = EstiloApp.crearBtnSecundario("Volver");
         panelBotones.add(btnRegistrarResultado);
         panelBotones.add(btnCerrarTorneo);
         panelBotones.add(btnVolver);
 
-        panelPrincipal.add(panelCabecera, BorderLayout.NORTH);
+        panelPrincipal.add(cabecera, BorderLayout.NORTH);
         panelPrincipal.add(panelCentral, BorderLayout.CENTER);
         panelPrincipal.add(panelBotones, BorderLayout.SOUTH);
-
         add(panelPrincipal);
     }
 
@@ -102,15 +116,13 @@ public class VentanaClasificacionLiga extends JFrame {
             int fila = tablaPartidos.getSelectedRow();
             if (fila >= 0 && fila < ids.size()) {
                 idPartidoSeleccionado = ids.get(fila)[0];
-                idLocalSeleccionado = ids.get(fila)[1];
-                idVisitanteSeleccionado = ids.get(fila)[2];
             }
         });
     }
 
     public int getIdPartidoSeleccionado() { return idPartidoSeleccionado; }
     public JButton getBtnRegistrarResultado() { return btnRegistrarResultado; }
+    public JButton getBtnCerrarTorneo() { return btnCerrarTorneo; }
     public JButton getBtnVolver() { return btnVolver; }
     public Torneo getTorneo() { return torneo; }
-    public JButton getBtnCerrarTorneo() { return btnCerrarTorneo; }
 }
