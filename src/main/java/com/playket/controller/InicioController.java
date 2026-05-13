@@ -3,6 +3,7 @@ package com.playket.controller;
 import com.playket.database.TorneoDAO;
 import com.playket.model.Torneo;
 import com.playket.model.Usuario;
+import com.playket.view.VentanaBuscarTorneos;
 import com.playket.view.VentanaCrearTorneo;
 import com.playket.view.VentanaInicio;
 import com.playket.view.VentanaCuadroEliminacion;
@@ -50,6 +51,9 @@ public class InicioController {
     }
 
     private void abrirBuscar() {
-        System.out.println("Abrir buscar");
+        vista.dispose();
+        VentanaBuscarTorneos ventanaBuscar = new VentanaBuscarTorneos();
+        new BuscarTorneosController(ventanaBuscar, usuarioActual);
+        ventanaBuscar.setVisible(true);
     }
 }
