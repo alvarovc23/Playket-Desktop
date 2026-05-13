@@ -2,7 +2,9 @@ package com.playket.view;
 
 import com.playket.model.Torneo;
 import com.playket.model.Usuario;
+import com.playket.util.EstiloApp;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.List;
 
@@ -18,7 +20,7 @@ public class VentanaInicio extends JFrame {
     public VentanaInicio(Usuario usuarioActual) {
         this.usuarioActual = usuarioActual;
         setTitle("Playket - Inicio");
-        setSize(500, 500);
+        setSize(500, 550);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
@@ -27,46 +29,56 @@ public class VentanaInicio extends JFrame {
 
     private void inicializarComponentes() {
         JPanel panelPrincipal = new JPanel(new BorderLayout());
+        panelPrincipal.setBackground(EstiloApp.GRIS_CLARO);
 
-        // Barra superior
-        JPanel panelTop = new JPanel(new BorderLayout());
-        panelTop.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
-        JLabel lblTitulo = new JLabel("Playket", SwingConstants.LEFT);
-        lblTitulo.setFont(new Font("Arial", Font.BOLD, 20));
-        btnPerfil = new JButton("[ " + usuarioActual.getNombre() + " ]");
-        btnPerfil.setBorderPainted(false);
-        btnPerfil.setContentAreaFilled(false);
-        panelTop.add(lblTitulo, BorderLayout.WEST);
-        panelTop.add(btnPerfil, BorderLayout.EAST);
+        // Cabecera azul con título y botón de perfil
+        JPanel cabecera = new JPanel(new BorderLayout());
+        cabecera.setBackground(EstiloApp.AZUL_OSCURO);
+        cabecera.setPreferredSize(new Dimension(0, 60));
+        cabecera.setBorder(new EmptyBorder(0, 15, 0, 15));
+        JLabel lblTitulo = new JLabel("Playket");
+        lblTitulo.setFont(EstiloApp.FUENTE_TITULO);
+        lblTitulo.setForeground(EstiloApp.BLANCO);
+        btnPerfil = EstiloApp.crearBtnTexto("[ " + usuarioActual.getNombre() + " ]");
+        btnPerfil.setForeground(EstiloApp.BLANCO);
+        cabecera.add(lblTitulo, BorderLayout.WEST);
+        cabecera.add(btnPerfil, BorderLayout.EAST);
 
         // Contenido central
         JPanel panelContenido = new JPanel();
         panelContenido.setLayout(new BoxLayout(panelContenido, BoxLayout.Y_AXIS));
-        panelContenido.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
+        panelContenido.setBackground(EstiloApp.GRIS_CLARO);
+        panelContenido.setBorder(new EmptyBorder(15, 15, 15, 15));
 
-        // Mis torneos
+        // Sección mis torneos
         JLabel lblMisTorneos = new JLabel("Mis torneos");
-        lblMisTorneos.setFont(new Font("Arial", Font.BOLD, 15));
+        lblMisTorneos.setFont(EstiloApp.FUENTE_SUBTITULO);
+        lblMisTorneos.setForeground(EstiloApp.AZUL_OSCURO);
+        lblMisTorneos.setAlignmentX(Component.LEFT_ALIGNMENT);
+
         panelMisTorneos = new JPanel();
         panelMisTorneos.setLayout(new BoxLayout(panelMisTorneos, BoxLayout.Y_AXIS));
+        panelMisTorneos.setBackground(EstiloApp.GRIS_CLARO);
+        panelMisTorneos.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        btnCrearTorneo = new JButton("+ Crear nuevo torneo");
+        btnCrearTorneo = EstiloApp.crearBtnPrimario("+ Crear nuevo torneo");
         btnCrearTorneo.setAlignmentX(Component.CENTER_ALIGNMENT);
-        btnCrearTorneo.setMaximumSize(new Dimension(Integer.MAX_VALUE, 36));
+        btnCrearTorneo.setMaximumSize(new Dimension(Integer.MAX_VALUE, 38));
 
         panelContenido.add(lblMisTorneos);
         panelContenido.add(Box.createRigidArea(new Dimension(0, 8)));
         panelContenido.add(panelMisTorneos);
-        panelContenido.add(Box.createRigidArea(new Dimension(0, 8)));
+        panelContenido.add(Box.createRigidArea(new Dimension(0, 10)));
         panelContenido.add(btnCrearTorneo);
 
         // Barra inferior
         JPanel panelBottom = new JPanel(new GridLayout(1, 1));
-        panelBottom.setBorder(BorderFactory.createEmptyBorder(5, 15, 10, 15));
-        btnBuscar = new JButton("Buscar torneos");
+        panelBottom.setBackground(EstiloApp.GRIS_CLARO);
+        panelBottom.setBorder(new EmptyBorder(5, 15, 10, 15));
+        btnBuscar = EstiloApp.crearBtnSecundario("Buscar torneos");
         panelBottom.add(btnBuscar);
 
-        panelPrincipal.add(panelTop, BorderLayout.NORTH);
+        panelPrincipal.add(cabecera, BorderLayout.NORTH);
         panelPrincipal.add(new JScrollPane(panelContenido), BorderLayout.CENTER);
         panelPrincipal.add(panelBottom, BorderLayout.SOUTH);
 
@@ -76,7 +88,10 @@ public class VentanaInicio extends JFrame {
     public void cargarMisTorneos(List<Torneo> torneos) {
         panelMisTorneos.removeAll();
         if (torneos.isEmpty()) {
-            panelMisTorneos.add(new JLabel("No tienes torneos creados todavía"));
+            JLabel lbl = new JLabel("No tienes torneos creados todavía");
+            lbl.setFont(EstiloApp.FUENTE_NORMAL);
+            lbl.setForeground(EstiloApp.GRIS_TEXTO);
+            panelMisTorneos.add(lbl);
         } else {
             for (Torneo t : torneos) panelMisTorneos.add(crearFilaTorneo(t));
         }
@@ -86,17 +101,32 @@ public class VentanaInicio extends JFrame {
 
     private JPanel crearFilaTorneo(Torneo t) {
         JPanel fila = new JPanel(new BorderLayout());
-        fila.setBorder(BorderFactory.createEmptyBorder(4, 0, 4, 0));
-        fila.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
+        fila.setBackground(EstiloApp.BLANCO);
+        fila.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createMatteBorder(0, 0, 1, 0, EstiloApp.GRIS_BORDE),
+                new EmptyBorder(8, 10, 8, 10)
+        ));
+        fila.setMaximumSize(new Dimension(Integer.MAX_VALUE, 45));
+
         JLabel nombre = new JLabel(t.getNombre());
+        nombre.setFont(EstiloApp.FUENTE_NORMAL);
+
         JLabel estado = new JLabel(t.getEstado());
-        estado.setForeground(Color.GRAY);
+        estado.setFont(EstiloApp.FUENTE_PEQUEÑA);
+        estado.setForeground(EstiloApp.GRIS_TEXTO);
+
         fila.add(nombre, BorderLayout.WEST);
         fila.add(estado, BorderLayout.EAST);
         fila.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         fila.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent e) {
                 if (torneoClickListener != null) torneoClickListener.accept(t);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent e) {
+                fila.setBackground(EstiloApp.AZUL_SEL);
+            }
+            public void mouseExited(java.awt.event.MouseEvent e) {
+                fila.setBackground(EstiloApp.BLANCO);
             }
         });
         return fila;

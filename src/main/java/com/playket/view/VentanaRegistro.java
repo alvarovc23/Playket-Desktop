@@ -1,6 +1,8 @@
 package com.playket.view;
 
+import com.playket.util.EstiloApp;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 public class VentanaRegistro extends JFrame {
@@ -18,7 +20,7 @@ public class VentanaRegistro extends JFrame {
 
     public VentanaRegistro() {
         setTitle("Playket - Registro");
-        setSize(420, 500);
+        setSize(440, 580);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
@@ -26,54 +28,50 @@ public class VentanaRegistro extends JFrame {
     }
 
     private void inicializarComponentes() {
-        JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
+        JPanel panelFondo = EstiloApp.crearPanelFondo();
+        panelFondo.setLayout(new BorderLayout());
+
+        JPanel cabecera = EstiloApp.crearCabecera("Crear cuenta");
+
+        JPanel tarjeta = EstiloApp.crearPanelTarjeta();
+        tarjeta.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5, 0, 5, 0);
         gbc.gridwidth = 2;
 
-        // Nombre y apellidos
         gbc.gridy = 0;
-        panel.add(new JLabel("Nombre"), gbc);
-        campoNombre = new JTextField();
-        campoNombre.setPreferredSize(new Dimension(0, 30));
+        tarjeta.add(EstiloApp.crearEtiqueta("Nombre"), gbc);
+        campoNombre = EstiloApp.crearCampoTexto();
         gbc.gridy = 1;
-        panel.add(campoNombre, gbc);
+        tarjeta.add(campoNombre, gbc);
 
         gbc.gridy = 2;
-        panel.add(new JLabel("Apellidos"), gbc);
-        campoApellidos = new JTextField();
-        campoApellidos.setPreferredSize(new Dimension(0, 30));
+        tarjeta.add(EstiloApp.crearEtiqueta("Apellidos"), gbc);
+        campoApellidos = EstiloApp.crearCampoTexto();
         gbc.gridy = 3;
-        panel.add(campoApellidos, gbc);
+        tarjeta.add(campoApellidos, gbc);
 
-        // Email
         gbc.gridy = 4;
-        panel.add(new JLabel("Correo electrónico"), gbc);
-        campoEmail = new JTextField();
-        campoEmail.setPreferredSize(new Dimension(0, 30));
+        tarjeta.add(EstiloApp.crearEtiqueta("Correo electrónico"), gbc);
+        campoEmail = EstiloApp.crearCampoTexto();
         gbc.gridy = 5;
-        panel.add(campoEmail, gbc);
+        tarjeta.add(campoEmail, gbc);
 
-        // Contraseña
         gbc.gridy = 6;
-        panel.add(new JLabel("Contraseña (mín. 8 caracteres)"), gbc);
-        campoPassword = new JPasswordField();
-        campoPassword.setPreferredSize(new Dimension(0, 30));
+        tarjeta.add(EstiloApp.crearEtiqueta("Contraseña (mín. 8 caracteres)"), gbc);
+        campoPassword = EstiloApp.crearCampoPassword();
         gbc.gridy = 7;
-        panel.add(campoPassword, gbc);
+        tarjeta.add(campoPassword, gbc);
 
         gbc.gridy = 8;
-        panel.add(new JLabel("Confirmar contraseña"), gbc);
-        campoConfirmarPassword = new JPasswordField();
-        campoConfirmarPassword.setPreferredSize(new Dimension(0, 30));
+        tarjeta.add(EstiloApp.crearEtiqueta("Confirmar contraseña"), gbc);
+        campoConfirmarPassword = EstiloApp.crearCampoPassword();
         gbc.gridy = 9;
-        panel.add(campoConfirmarPassword, gbc);
+        tarjeta.add(campoConfirmarPassword, gbc);
 
-        // Pregunta de seguridad
         gbc.gridy = 10;
-        panel.add(new JLabel("Pregunta de seguridad"), gbc);
+        tarjeta.add(EstiloApp.crearEtiqueta("Pregunta de seguridad"), gbc);
         String[] preguntas = {
                 "¿Nombre de tu primera mascota?",
                 "¿Ciudad donde naciste?",
@@ -81,34 +79,41 @@ public class VentanaRegistro extends JFrame {
                 "¿Deporte favorito?"
         };
         comboPregunta = new JComboBox<>(preguntas);
+        comboPregunta.setFont(EstiloApp.FUENTE_NORMAL);
         gbc.gridy = 11;
-        panel.add(comboPregunta, gbc);
+        tarjeta.add(comboPregunta, gbc);
 
         gbc.gridy = 12;
-        panel.add(new JLabel("Respuesta"), gbc);
-        campoRespuesta = new JTextField();
-        campoRespuesta.setPreferredSize(new Dimension(0, 30));
+        tarjeta.add(EstiloApp.crearEtiqueta("Respuesta"), gbc);
+        campoRespuesta = EstiloApp.crearCampoTexto();
         gbc.gridy = 13;
-        panel.add(campoRespuesta, gbc);
+        tarjeta.add(campoRespuesta, gbc);
 
-        // Mensaje
         lblMensaje = new JLabel("", SwingConstants.CENTER);
-        lblMensaje.setForeground(Color.RED);
+        lblMensaje.setForeground(EstiloApp.ROJO_ERROR);
+        lblMensaje.setFont(EstiloApp.FUENTE_PEQUEÑA);
         gbc.gridy = 14;
-        panel.add(lblMensaje, gbc);
+        tarjeta.add(lblMensaje, gbc);
 
-        // Botones
-        btnCrearCuenta = new JButton("Crear cuenta");
-        btnCrearCuenta.setPreferredSize(new Dimension(0, 36));
+        btnCrearCuenta = EstiloApp.crearBtnPrimario("Crear cuenta");
         gbc.gridy = 15;
-        panel.add(btnCrearCuenta, gbc);
+        gbc.insets = new Insets(5, 0, 4, 0);
+        tarjeta.add(btnCrearCuenta, gbc);
 
-        btnVolver = new JButton("Volver");
-        btnVolver.setPreferredSize(new Dimension(0, 36));
+        btnVolver = EstiloApp.crearBtnSecundario("Volver");
         gbc.gridy = 16;
-        panel.add(btnVolver, gbc);
+        gbc.insets = new Insets(4, 0, 0, 0);
+        tarjeta.add(btnVolver, gbc);
 
-        add(new JScrollPane(panel));
+        JPanel panelCentro = EstiloApp.crearPanelFondo();
+        panelCentro.setLayout(new GridBagLayout());
+        panelCentro.setBorder(new EmptyBorder(15, 30, 15, 30));
+        panelCentro.add(tarjeta);
+
+        panelFondo.add(cabecera, BorderLayout.NORTH);
+        panelFondo.add(new JScrollPane(panelCentro), BorderLayout.CENTER);
+
+        add(panelFondo);
     }
 
     public String getNombre() { return campoNombre.getText().trim(); }
@@ -118,9 +123,12 @@ public class VentanaRegistro extends JFrame {
     public String getConfirmarPassword() { return new String(campoConfirmarPassword.getPassword()); }
     public String getPreguntaSeguridad() { return (String) comboPregunta.getSelectedItem(); }
     public String getRespuesta() { return campoRespuesta.getText().trim(); }
-    public void setMensaje(String msg) { lblMensaje.setText(msg); }
+    public void setMensaje(String msg) {
+        lblMensaje.setForeground(EstiloApp.ROJO_ERROR);
+        lblMensaje.setText(msg);
+    }
     public void setMensajeVerde(String msg) {
-        lblMensaje.setForeground(Color.GREEN.darker());
+        lblMensaje.setForeground(EstiloApp.VERDE_EXITO);
         lblMensaje.setText(msg);
     }
     public JButton getBtnCrearCuenta() { return btnCrearCuenta; }
