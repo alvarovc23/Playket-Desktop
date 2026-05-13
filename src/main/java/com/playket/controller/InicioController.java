@@ -9,7 +9,6 @@ import com.playket.view.VentanaCrearTorneo;
 import com.playket.view.VentanaInicio;
 import com.playket.view.VentanaBuscarTorneos;
 import com.playket.view.VentanaPerfil;
-
 import java.util.List;
 
 public class InicioController {

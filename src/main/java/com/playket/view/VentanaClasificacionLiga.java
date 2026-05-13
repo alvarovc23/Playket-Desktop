@@ -109,8 +109,6 @@ public class VentanaClasificacionLiga extends JFrame {
     }
 
     public int getIdPartidoSeleccionado() { return idPartidoSeleccionado; }
-    public int getIdLocalSeleccionado() { return idLocalSeleccionado; }
-    public int getIdVisitanteSeleccionado() { return idVisitanteSeleccionado; }
     public JButton getBtnRegistrarResultado() { return btnRegistrarResultado; }
     public JButton getBtnVolver() { return btnVolver; }
     public Torneo getTorneo() { return torneo; }

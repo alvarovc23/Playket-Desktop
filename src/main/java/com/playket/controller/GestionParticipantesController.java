@@ -8,7 +8,6 @@ import com.playket.util.GeneradorCuadro;
 import com.playket.util.GeneradorLiga;
 import com.playket.view.VentanaGestionParticipantes;
 import com.playket.view.VentanaInicio;
-
 import javax.swing.*;
 import java.util.List;
 
@@ -102,7 +101,7 @@ public class GestionParticipantesController {
                 opciones,
                 opciones[0]
         );
-        if (confirmacion != JOptionPane.YES_OPTION) return;
+        if (confirmacion != 0) return; // 0 = "Sí", 1 = "No"
 
         boolean exito;
         if (torneo.getFormato().equals("ELIMINACION")) {

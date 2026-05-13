@@ -10,7 +10,6 @@ import com.playket.model.Usuario;
 import com.playket.view.VentanaCuadroEliminacion;
 import com.playket.view.VentanaInicio;
 import com.playket.view.VentanaRegistrarResultado;
-
 import javax.swing.JOptionPane;
 import java.util.HashMap;
 import java.util.List;

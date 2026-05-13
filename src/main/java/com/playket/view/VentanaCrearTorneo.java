@@ -111,10 +111,6 @@ public class VentanaCrearTorneo extends JFrame {
     public String getFecha() { return campoFecha.getText().trim(); }
     public String getDescripcion() { return campoDescripcion.getText().trim(); }
     public void setMensaje(String msg) { lblMensaje.setText(msg); }
-    public void setMensajeVerde(String msg) {
-        lblMensaje.setForeground(Color.GREEN.darker());
-        lblMensaje.setText(msg);
-    }
     public JButton getBtnCrear() { return btnCrear; }
     public JButton getBtnVolver() { return btnVolver; }
 }

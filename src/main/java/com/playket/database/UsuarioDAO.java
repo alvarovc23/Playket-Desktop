@@ -3,11 +3,9 @@ package com.playket.database;
 import com.playket.model.Usuario;
 import java.sql.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 public class UsuarioDAO {
-
+    //Guarda un nuevo usuario en la base de datos
     public boolean insertar(Usuario u) {
         String sql = "INSERT INTO USUARIO (nombre, apellidos, email, password_hash, " +
                 "pregunta_seguridad, respuesta_seg_hash, fecha_registro) " +
@@ -16,9 +14,9 @@ public class UsuarioDAO {
             ps.setString(1, u.getNombre());
             ps.setString(2, u.getApellidos());
             ps.setString(3, u.getEmail());
-            ps.setString(4, u.getPasswordHash());
+            ps.setString(4, u.getPassword());
             ps.setString(5, u.getPreguntaSeguridad());
-            ps.setString(6, u.getRespuestaSegHash());
+            ps.setString(6, u.getRespuestaSeg());
             ps.setDate(7, Date.valueOf(LocalDate.now()));
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -26,7 +24,7 @@ public class UsuarioDAO {
             return false;
         }
     }
-
+    //Busca un usuario por su correo electrónico
     public Usuario buscarPorEmail(String email) {
         String sql = "SELECT * FROM USUARIO WHERE email = ?";
         try (PreparedStatement ps = ConexionDB.getConexion().prepareStatement(sql)) {
@@ -40,17 +38,17 @@ public class UsuarioDAO {
         }
         return null;
     }
-
+    //COmprueba si ya existe una cuenta con ese correo
     public boolean emailExiste(String email) {
         return buscarPorEmail(email) != null;
     }
-
+    //Actualiza el nombre, apellidos y contraseña del usuario
     public boolean actualizar(Usuario u) {
         String sql = "UPDATE USUARIO SET nombre = ?, apellidos = ?, password_hash = ? WHERE id = ?";
         try (PreparedStatement ps = ConexionDB.getConexion().prepareStatement(sql)) {
             ps.setString(1, u.getNombre());
             ps.setString(2, u.getApellidos());
-            ps.setString(3, u.getPasswordHash());
+            ps.setString(3, u.getPassword());
             ps.setInt(4, u.getId());
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -70,20 +68,5 @@ public class UsuarioDAO {
                 rs.getString("respuesta_seg_hash"),
                 rs.getDate("fecha_registro").toLocalDate()
         );
-    }
-
-    public List<String> listarEmailsCoOrganizadores(int idTorneo) {
-        List<String> emails = new ArrayList<>();
-        String sql = "SELECT u.email FROM USUARIO u " +
-                "INNER JOIN ROL_TORNEO r ON u.id = r.id_usuario " +
-                "WHERE r.id_torneo = ?";
-        try (PreparedStatement ps = ConexionDB.getConexion().prepareStatement(sql)) {
-            ps.setInt(1, idTorneo);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) emails.add(rs.getString("email"));
-        } catch (SQLException e) {
-            System.err.println("Error al listar co-organizadores: " + e.getMessage());
-        }
-        return emails;
     }
 }

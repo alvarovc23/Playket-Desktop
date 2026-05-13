@@ -6,7 +6,6 @@ import com.playket.view.VentanaInicio;
 import com.playket.view.VentanaLogin;
 import com.playket.view.VentanaRecuperarPassword;
 import com.playket.view.VentanaRegistro;
-
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -48,7 +47,7 @@ public class LoginController {
         }
 
         Usuario usuario = usuarioDAO.buscarPorEmail(email);
-        if (usuario == null || !password.equals(usuario.getPasswordHash())) {
+        if (usuario == null || !password.equals(usuario.getPassword())) {
             registrarIntentoFallido(email);
             int restantes = MAX_INTENTOS - intentosFallidos.getOrDefault(email, 0);
             if (restantes <= 0) {

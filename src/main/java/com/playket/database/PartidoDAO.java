@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PartidoDAO {
-
+    //Guarda un nuevo partido en la base de datos
     public boolean insertar(Partido p) {
         String sql = "INSERT INTO PARTIDO (fecha, hora, sede, estado, tipo_victoria, " +
                 "id_torneo, id_local, id_visitante, id_ganador) " +
@@ -28,7 +28,7 @@ public class PartidoDAO {
             return false;
         }
     }
-
+    //Devuelve todos los partidos de un torneo concreto
     public List<Partido> listarPorTorneo(int idTorneo) {
         List<Partido> lista = new ArrayList<>();
         String sql = "SELECT * FROM PARTIDO WHERE id_torneo = ? ORDER BY id";
@@ -41,7 +41,7 @@ public class PartidoDAO {
         }
         return lista;
     }
-
+    //Guarda el resultado de un partido y lo marca como finalizado
     public boolean actualizarResultado(int idPartido, int idGanador, String tipoVictoria) {
         String sql = "UPDATE PARTIDO SET id_ganador = ?, tipo_victoria = ?, estado = 'FINALIZADO' WHERE id = ?";
         try (PreparedStatement ps = ConexionDB.getConexion().prepareStatement(sql)) {
@@ -69,16 +69,5 @@ public class PartidoDAO {
         int ganador = rs.getInt("id_ganador");
         p.setIdGanador(rs.wasNull() ? null : ganador);
         return p;
-    }
-
-    public boolean eliminarPorTorneo(int idTorneo) {
-        String sql = "DELETE FROM PARTIDO WHERE id_torneo = ?";
-        try (PreparedStatement ps = ConexionDB.getConexion().prepareStatement(sql)) {
-            ps.setInt(1, idTorneo);
-            return ps.executeUpdate() >= 0;
-        } catch (SQLException e) {
-            System.err.println("Error al eliminar partidos: " + e.getMessage());
-            return false;
-        }
     }
 }

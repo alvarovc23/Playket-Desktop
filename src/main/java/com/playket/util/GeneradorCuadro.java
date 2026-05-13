@@ -5,7 +5,6 @@ import com.playket.database.TorneoDAO;
 import com.playket.model.Participante;
 import com.playket.model.Partido;
 import com.playket.model.Torneo;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

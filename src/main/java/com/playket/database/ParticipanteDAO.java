@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ParticipanteDAO {
-
+    //Añade un nuevo participante a un torneo
     public boolean insertar(Participante p) {
         String sql = "INSERT INTO PARTICIPANTE (nombre, apellidos, email, id_torneo) " +
                 "VALUES (?, ?, ?, ?)";
@@ -21,7 +21,7 @@ public class ParticipanteDAO {
             return false;
         }
     }
-
+    //Devuelve todos los participantes de un torneo concreto
     public List<Participante> listarPorTorneo(int idTorneo) {
         List<Participante> lista = new ArrayList<>();
         String sql = "SELECT * FROM PARTICIPANTE WHERE id_torneo = ? ORDER BY nombre";
@@ -34,7 +34,7 @@ public class ParticipanteDAO {
         }
         return lista;
     }
-
+    //Elimina un participante por su id
     public boolean eliminar(int id) {
         String sql = "DELETE FROM PARTICIPANTE WHERE id = ?";
         try (PreparedStatement ps = ConexionDB.getConexion().prepareStatement(sql)) {
@@ -42,20 +42,6 @@ public class ParticipanteDAO {
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             System.err.println("Error al eliminar participante: " + e.getMessage());
-            return false;
-        }
-    }
-
-    public boolean actualizar(Participante p) {
-        String sql = "UPDATE PARTICIPANTE SET nombre=?, apellidos=?, email=? WHERE id=?";
-        try (PreparedStatement ps = ConexionDB.getConexion().prepareStatement(sql)) {
-            ps.setString(1, p.getNombre());
-            ps.setString(2, p.getApellidos());
-            ps.setString(3, p.getEmail());
-            ps.setInt(4, p.getId());
-            return ps.executeUpdate() > 0;
-        } catch (SQLException e) {
-            System.err.println("Error al actualizar participante: " + e.getMessage());
             return false;
         }
     }

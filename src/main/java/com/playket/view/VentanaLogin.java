@@ -86,5 +86,4 @@ public class VentanaLogin extends JFrame {
     public JButton getBtnIniciarSesion() { return btnIniciarSesion; }
     public JButton getBtnCrearCuenta() { return btnCrearCuenta; }
     public JButton getBtnOlvidePassword() { return btnOlvidePassword; }
-    public void limpiar() { campoEmail.setText(""); campoPassword.setText(""); }
 }

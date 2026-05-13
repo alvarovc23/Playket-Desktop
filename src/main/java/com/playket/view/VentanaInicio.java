@@ -2,7 +2,6 @@ package com.playket.view;
 
 import com.playket.model.Torneo;
 import com.playket.model.Usuario;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
@@ -110,5 +109,4 @@ public class VentanaInicio extends JFrame {
     public JButton getBtnCrearTorneo() { return btnCrearTorneo; }
     public JButton getBtnBuscar() { return btnBuscar; }
     public JButton getBtnPerfil() { return btnPerfil; }
-    public Usuario getUsuarioActual() { return usuarioActual; }
 }

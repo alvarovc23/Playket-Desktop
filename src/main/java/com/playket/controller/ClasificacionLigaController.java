@@ -7,7 +7,6 @@ import com.playket.model.*;
 import com.playket.view.VentanaClasificacionLiga;
 import com.playket.view.VentanaInicio;
 import com.playket.view.VentanaRegistrarResultado;
-
 import javax.swing.JOptionPane;
 import java.util.*;
 

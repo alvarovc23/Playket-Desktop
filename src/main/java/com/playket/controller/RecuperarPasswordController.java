@@ -4,7 +4,6 @@ import com.playket.database.UsuarioDAO;
 import com.playket.model.Usuario;
 import com.playket.view.VentanaLogin;
 import com.playket.view.VentanaRecuperarPassword;
-
 import javax.swing.*;
 
 public class RecuperarPasswordController {
@@ -52,7 +51,7 @@ public class RecuperarPasswordController {
             return;
         }
 
-        if (!respuesta.equals(usuarioEncontrado.getRespuestaSegHash())) {
+        if (!respuesta.equals(usuarioEncontrado.getRespuestaSeg())) {
             vista.setMensaje("La respuesta no es correcta");
             return;
         }
@@ -67,7 +66,7 @@ public class RecuperarPasswordController {
             return;
         }
 
-        usuarioEncontrado.setPasswordHash(passwordNueva);
+        usuarioEncontrado.setPassword(passwordNueva);
         if (usuarioDAO.actualizar(usuarioEncontrado)) {
             vista.setMensajeVerde("Contraseña cambiada correctamente");
             Timer timer = new javax.swing.Timer(1500, ev -> volver());

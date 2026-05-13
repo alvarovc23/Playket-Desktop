@@ -8,7 +8,6 @@ import com.playket.model.Usuario;
 import com.playket.view.VentanaClasificacionLiga;
 import com.playket.view.VentanaCuadroEliminacion;
 import com.playket.view.VentanaRegistrarResultado;
-
 import javax.swing.*;
 import java.util.Map;
 
@@ -52,7 +51,7 @@ public class RegistrarResultadoController {
                 opciones,
                 opciones[0]
         );
-        if (confirmacion != JOptionPane.YES_OPTION) return;
+        if (confirmacion != 0) return; // 0 = "Sí", 1 = "No"
 
         if (partidoDAO.actualizarResultado(partido.getId(), idGanador, "normal")) {
             JOptionPane.showMessageDialog(vista, "Resultado registrado correctamente");

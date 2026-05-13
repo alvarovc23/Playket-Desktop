@@ -7,23 +7,23 @@ public class Usuario {
     private String nombre;
     private String apellidos;
     private String email;
-    private String passwordHash;
+    private String password;
     private String preguntaSeguridad;
-    private String respuestaSegHash;
+    private String respuestaSeg;
     private LocalDate fechaRegistro;
 
     public Usuario() {}
 
     public Usuario(int id, String nombre, String apellidos, String email,
-                   String passwordHash, String preguntaSeguridad,
-                   String respuestaSegHash, LocalDate fechaRegistro) {
+                   String password, String preguntaSeguridad,
+                   String respuestaSeg, LocalDate fechaRegistro) {
         this.id = id;
         this.nombre = nombre;
         this.apellidos = apellidos;
         this.email = email;
-        this.passwordHash = passwordHash;
+        this.password = password;
         this.preguntaSeguridad = preguntaSeguridad;
-        this.respuestaSegHash = respuestaSegHash;
+        this.respuestaSeg = respuestaSeg;
         this.fechaRegistro = fechaRegistro;
     }
 
@@ -35,12 +35,12 @@ public class Usuario {
     public void setApellidos(String apellidos) { this.apellidos = apellidos; }
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
-    public String getPasswordHash() { return passwordHash; }
-    public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
     public String getPreguntaSeguridad() { return preguntaSeguridad; }
     public void setPreguntaSeguridad(String p) { this.preguntaSeguridad = p; }
-    public String getRespuestaSegHash() { return respuestaSegHash; }
-    public void setRespuestaSegHash(String r) { this.respuestaSegHash = r; }
+    public String getRespuestaSeg() { return respuestaSeg; }
+    public void setRespuestaSeg(String r) { this.respuestaSeg = r; }
     public LocalDate getFechaRegistro() { return fechaRegistro; }
     public void setFechaRegistro(LocalDate fechaRegistro) { this.fechaRegistro = fechaRegistro; }
 }

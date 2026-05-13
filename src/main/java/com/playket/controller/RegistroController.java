@@ -4,7 +4,6 @@ import com.playket.database.UsuarioDAO;
 import com.playket.model.Usuario;
 import com.playket.view.VentanaLogin;
 import com.playket.view.VentanaRegistro;
-
 import javax.swing.*;
 
 public class RegistroController {
@@ -57,9 +56,9 @@ public class RegistroController {
         usuario.setNombre(nombre);
         usuario.setApellidos(apellidos);
         usuario.setEmail(email);
-        usuario.setPasswordHash(password);
+        usuario.setPassword(password);
         usuario.setPreguntaSeguridad(pregunta);
-        usuario.setRespuestaSegHash(respuesta);
+        usuario.setRespuestaSeg(respuesta);
 
         if (usuarioDAO.insertar(usuario)) {
             vista.setMensajeVerde("Cuenta creada correctamente");

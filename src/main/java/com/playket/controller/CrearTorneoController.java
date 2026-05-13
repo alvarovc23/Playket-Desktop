@@ -8,8 +8,6 @@ import com.playket.model.Usuario;
 import com.playket.view.VentanaCrearTorneo;
 import com.playket.view.VentanaGestionParticipantes;
 import com.playket.view.VentanaInicio;
-
-import javax.swing.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
