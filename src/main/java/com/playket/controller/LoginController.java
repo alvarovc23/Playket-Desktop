@@ -30,6 +30,7 @@ public class LoginController {
     private void inicializarEventos() {
         vista.getBtnIniciarSesion().addActionListener(e -> iniciarSesion());
         vista.getBtnCrearCuenta().addActionListener(e -> abrirRegistro());
+        vista.getBtnOlvidePassword().addActionListener(e -> abrirRecuperar());
     }
 
     private void iniciarSesion() {
