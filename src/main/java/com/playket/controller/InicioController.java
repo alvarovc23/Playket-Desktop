@@ -1,5 +1,6 @@
 package com.playket.controller;
 
+import com.playket.database.RolTorneoDAO;
 import com.playket.database.SeguimientoDAO;
 import com.playket.database.TorneoDAO;
 import com.playket.model.Torneo;
@@ -13,12 +14,14 @@ public class InicioController {
     private final VentanaInicio vista;
     private final TorneoDAO torneoDAO;
     private final SeguimientoDAO seguimientoDAO;
+    private final RolTorneoDAO rolTorneoDAO;
     private final Usuario usuarioActual;
 
     public InicioController(VentanaInicio vista, Usuario usuarioActual) {
         this.vista = vista;
         this.torneoDAO = new TorneoDAO();
         this.seguimientoDAO = new SeguimientoDAO();
+        this.rolTorneoDAO = new RolTorneoDAO();
         this.usuarioActual = usuarioActual;
         inicializarEventos();
         cargarDatos();
@@ -34,8 +37,12 @@ public class InicioController {
     private void cargarDatos() {
         List<Torneo> misTorneos = torneoDAO.listarPorOrganizador(usuarioActual.getId());
         vista.cargarMisTorneos(misTorneos);
+
         List<Torneo> torneosSeguidos = seguimientoDAO.listarTorneosSeguidos(usuarioActual.getId());
         vista.cargarTorneosSeguidos(torneosSeguidos);
+
+        List<Torneo> torneosCoOrg = rolTorneoDAO.listarTorneosCoOrganizador(usuarioActual.getId());
+        vista.cargarTorneosCoOrganizador(torneosCoOrg);
     }
 
     private void abrirCrearTorneo() {
