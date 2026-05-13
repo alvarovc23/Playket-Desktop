@@ -2,7 +2,6 @@ package com.playket.controller;
 
 import com.playket.database.UsuarioDAO;
 import com.playket.model.Usuario;
-import com.playket.util.PasswordHasher;
 import com.playket.view.VentanaInicio;
 import com.playket.view.VentanaLogin;
 import com.playket.view.VentanaRegistro;
@@ -47,7 +46,7 @@ public class LoginController {
         }
 
         Usuario usuario = usuarioDAO.buscarPorEmail(email);
-        if (usuario == null || !PasswordHasher.verificar(password, usuario.getPasswordHash())) {
+        if (usuario == null || !password.equals(usuario.getPasswordHash())) {
             registrarIntentoFallido(email);
             int restantes = MAX_INTENTOS - intentosFallidos.getOrDefault(email, 0);
             if (restantes <= 0) {
