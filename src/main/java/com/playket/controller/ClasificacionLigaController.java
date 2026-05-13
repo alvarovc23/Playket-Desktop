@@ -2,10 +2,7 @@ package com.playket.controller;
 
 import com.playket.database.ParticipanteDAO;
 import com.playket.database.PartidoDAO;
-import com.playket.model.Participante;
-import com.playket.model.Partido;
-import com.playket.model.Torneo;
-import com.playket.model.Usuario;
+import com.playket.model.*;
 import com.playket.view.VentanaClasificacionLiga;
 import com.playket.view.VentanaInicio;
 import com.playket.view.VentanaRegistrarResultado;
@@ -46,37 +43,51 @@ public class ClasificacionLigaController {
     }
 
     private void cargarClasificacion(List<Participante> participantes) {
-        Map<Integer, int[]> stats = new LinkedHashMap<>();
-        for (Participante p : participantes) stats.put(p.getId(), new int[5]);
+        Map<Integer, EstadisticaLiga> stats = new LinkedHashMap<>();
+        for (Participante p : participantes) {
+            stats.put(p.getId(), new EstadisticaLiga(p.getNombre()));
+        }
 
         for (Partido p : partidos) {
             if (!p.getEstado().equals("FINALIZADO")) continue;
-            int[] local = stats.get(p.getIdLocal());
-            int[] visitante = stats.get(p.getIdVisitante());
+            EstadisticaLiga local = stats.get(p.getIdLocal());
+            EstadisticaLiga visitante = stats.get(p.getIdVisitante());
             if (local == null || visitante == null) continue;
 
-            local[0]++; visitante[0]++;
+            local.partidosJugados++;
+            visitante.partidosJugados++;
 
             if (p.getIdGanador() == null) {
-                local[2]++; visitante[2]++;
-                local[4]++; visitante[4]++;
+                local.partidosEmpatados++;
+                visitante.partidosEmpatados++;
+                local.puntos++;
+                visitante.puntos++;
             } else if (p.getIdGanador() == p.getIdLocal()) {
-                local[1]++; local[4] += 3;
-                visitante[3]++;
+                local.partidosGanados++;
+                local.puntos += 3;
+                visitante.partidosPerdidos++;
             } else {
-                visitante[1]++; visitante[4] += 3;
-                local[3]++;
+                visitante.partidosGanados++;
+                visitante.puntos += 3;
+                local.partidosPerdidos++;
             }
         }
 
+        List<EstadisticaLiga> lista = new ArrayList<>(stats.values());
+        lista.sort((a, b) -> b.puntos - a.puntos);
+
         List<Object[]> filas = new ArrayList<>();
-        for (Map.Entry<Integer, int[]> entry : stats.entrySet()) {
-            Participante p = mapaParticipantes.get(entry.getKey());
-            int[] s = entry.getValue();
-            filas.add(new Object[]{p.getNombre(), s[0], s[1], s[2], s[3], s[4]});
+        for (EstadisticaLiga e : lista) {
+            filas.add(new Object[]{
+                    e.nombre,
+                    e.partidosJugados,
+                    e.partidosGanados,
+                    e.partidosEmpatados,
+                    e.partidosPerdidos,
+                    e.puntos
+            });
         }
 
-        filas.sort((a, b) -> (int) b[5] - (int) a[5]);
         vista.cargarClasificacion(filas);
     }
 

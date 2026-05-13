@@ -22,21 +22,25 @@ public class GeneradorLiga {
     public boolean generarCalendario(Torneo torneo, List<Participante> participantes) {
         List<Participante> lista = new ArrayList<>(participantes);
 
-        // Si número impar añade un bye (descanso)
+        // El algoritmo Round Robin necesita un número par de equipos.
+        // Si hay número impar, añadimos un equipo ficticio "bye" (null)
+        // que representa un descanso — el equipo que juegue contra él no tiene partido esa jornada.
         if (lista.size() % 2 != 0) {
             lista.add(null);
         }
 
         int n = lista.size();
-        int numJornadas = n - 1;
+        int numJornadas = n - 1; // Con N equipos se juegan N-1 jornadas
+
         boolean todoOk = true;
 
         for (int jornada = 0; jornada < numJornadas; jornada++) {
+            // En cada jornada se enfrentan los equipos de los extremos hacia el centro
             for (int i = 0; i < n / 2; i++) {
                 Participante local = lista.get(i);
                 Participante visitante = lista.get(n - 1 - i);
 
-                // Salta si alguno es bye
+                // Si alguno es el equipo ficticio, ese partido no se genera
                 if (local == null || visitante == null) continue;
 
                 Partido partido = new Partido();
@@ -47,7 +51,8 @@ public class GeneradorLiga {
                 if (!partidoDAO.insertar(partido)) todoOk = false;
             }
 
-            // Rotación para la siguiente jornada (fijo el primero)
+            // Rotación: el primer equipo se queda fijo,
+            // el resto rota una posición para generar los emparejamientos de la siguiente jornada
             Participante ultimo = lista.remove(n - 1);
             lista.add(1, ultimo);
         }
