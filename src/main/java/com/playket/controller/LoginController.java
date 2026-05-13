@@ -4,6 +4,7 @@ import com.playket.database.UsuarioDAO;
 import com.playket.model.Usuario;
 import com.playket.view.VentanaInicio;
 import com.playket.view.VentanaLogin;
+import com.playket.view.VentanaRecuperarPassword;
 import com.playket.view.VentanaRegistro;
 
 import java.time.LocalDateTime;
@@ -94,5 +95,12 @@ public class LoginController {
         VentanaRegistro ventanaRegistro = new VentanaRegistro();
         new RegistroController(ventanaRegistro);
         ventanaRegistro.setVisible(true);
+    }
+
+    private void abrirRecuperar() {
+        vista.dispose();
+        VentanaRecuperarPassword ventana = new VentanaRecuperarPassword();
+        new RecuperarPasswordController(ventana);
+        ventana.setVisible(true);
     }
 }
