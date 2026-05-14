@@ -38,7 +38,7 @@ public class UsuarioDAO {
         }
         return null;
     }
-    //COmprueba si ya existe una cuenta con ese correo
+    //Comprueba si ya existe una cuenta con ese correo
     public boolean emailExiste(String email) {
         return buscarPorEmail(email) != null;
     }
@@ -56,7 +56,7 @@ public class UsuarioDAO {
             return false;
         }
     }
-
+    // Convierte una fila del ResultSet en un objeto Usuario
     private Usuario mapear(ResultSet rs) throws SQLException {
         return new Usuario(
                 rs.getInt("id"),

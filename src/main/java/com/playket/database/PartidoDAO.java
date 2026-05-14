@@ -28,7 +28,7 @@ public class PartidoDAO {
             return false;
         }
     }
-    //Devuelve todos los partidos de un torneo concreto
+    //Devuelve todos los partidos de un torneo concreto ordenados por ID
     public List<Partido> listarPorTorneo(int idTorneo) {
         List<Partido> lista = new ArrayList<>();
         String sql = "SELECT * FROM PARTIDO WHERE id_torneo = ? ORDER BY id";
@@ -54,7 +54,7 @@ public class PartidoDAO {
             return false;
         }
     }
-
+    //Convierte una fila del ResultSet en un objeto Partido
     private Partido mapear(ResultSet rs) throws SQLException {
         Partido p = new Partido();
         p.setId(rs.getInt("id"));

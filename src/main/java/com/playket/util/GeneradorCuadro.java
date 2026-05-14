@@ -18,13 +18,14 @@ public class GeneradorCuadro {
         this.partidoDAO = new PartidoDAO();
         this.torneoDAO = new TorneoDAO();
     }
-
+    //Genera los partidos de primera ronda con sorteo aleatorio
+    //y actualiza el estado del torneo a EN_CURSO
     public boolean generarEliminacion(Torneo torneo, List<Participante> participantes) {
         // Mezcla aleatoria para el sorteo
         List<Participante> mezclados = new ArrayList<>(participantes);
         Collections.shuffle(mezclados);
 
-        // Genera los partidos de primera ronda
+        //Crea un partido por cada par de participantes
         boolean todoOk = true;
         for (int i = 0; i < mezclados.size() - 1; i += 2) {
             Partido partido = new Partido();
@@ -37,7 +38,7 @@ public class GeneradorCuadro {
             }
         }
 
-        // Cambia el estado del torneo a EN_CURSO
+        //Cambia el estado del torneo a EN_CURSO
         if (todoOk) {
             torneo.setEstado("EN_CURSO");
             torneoDAO.actualizar(torneo);

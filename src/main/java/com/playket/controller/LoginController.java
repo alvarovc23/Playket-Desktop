@@ -17,6 +17,7 @@ public class LoginController {
 
     private static final int MAX_INTENTOS = 3;
     private static final int MINUTOS_BLOQUEO = 5;
+    //Contador de intentos fallidos para el bloque de acceso
     private HashMap<String, Integer> intentosFallidos = new HashMap<>();
     private HashMap<String, LocalDateTime> tiempoBloqueo = new HashMap<>();
 
@@ -25,13 +26,13 @@ public class LoginController {
         usuarioDAO = new UsuarioDAO();
         inicializarEventos();
     }
-
+    //Asocia los eventos de los botones a sus acciones correspondientes
     private void inicializarEventos() {
         vista.getBtnIniciarSesion().addActionListener(e -> iniciarSesion());
         vista.getBtnCrearCuenta().addActionListener(e -> abrirRegistro());
         vista.getBtnOlvidePassword().addActionListener(e -> abrirRecuperar());
     }
-
+    //Valida las credenciales e inicia sesión si son correctas
     private void iniciarSesion() {
         String email = vista.getEmail();
         String password = vista.getPassword();

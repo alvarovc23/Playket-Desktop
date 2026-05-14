@@ -7,6 +7,7 @@ import java.util.List;
 
 public class TorneoDAO {
 
+    //Inserta un nuevo torneo en la base de datos
     public boolean insertar(Torneo t) {
         String sql = "INSERT INTO TORNEO (nombre, descripcion, formato, estado, " +
                 "fecha_inicio, num_participantes, imagen_portada, id_deporte, id_organizador) " +
@@ -28,6 +29,7 @@ public class TorneoDAO {
         }
     }
 
+    //Devuelve todos los torneos creados por un organizador concreto
     public ArrayList<Torneo> listarPorOrganizador(int idOrganizador) {
         ArrayList<Torneo> lista = new ArrayList<>();
         String sql = "SELECT * FROM TORNEO WHERE id_organizador = ? ORDER BY fecha_inicio DESC";
@@ -41,7 +43,7 @@ public class TorneoDAO {
         return lista;
     }
 
-    //Busca torneos con filtros opcionales
+    //Busca torneos aplicando filtros opcionales de nombre, deporte y estado
     public List<Torneo> buscar(String nombre, Integer idDeporte, String estado) {
         String filtroNombre = (nombre != null && !nombre.isEmpty()) ? "%" + nombre + "%" : "%";
         String filtroEstado = (estado != null && !estado.isEmpty()) ? estado : "%";
@@ -59,7 +61,7 @@ public class TorneoDAO {
         } catch (SQLException e) {
             System.err.println("Error al buscar torneos: " + e.getMessage());
         }
-
+        //Filtra por deporte si se ha especificado
         if(idDeporte != null) {
             ArrayList<Torneo> filtrados = new ArrayList<>();
             for(Torneo t : lista) {
@@ -72,7 +74,7 @@ public class TorneoDAO {
 
         return lista;
     }
-
+    //Actualiza los datos generales de un torneo existente
     public boolean actualizar(Torneo t) {
         String sql = "UPDATE TORNEO SET nombre=?, descripcion=?, estado=?, " +
                 "fecha_inicio=?, imagen_portada=? WHERE id=?";
@@ -89,7 +91,7 @@ public class TorneoDAO {
             return false;
         }
     }
-
+    //Marca un torneo como FINALIZADO bloqueando cualquier cambio posterior
     public boolean cerrar(int idTorneo) {
         String sql = "UPDATE TORNEO SET estado = 'FINALIZADO' WHERE id = ?";
         try (PreparedStatement ps = ConexionDB.getConexion().prepareStatement(sql)) {
@@ -100,7 +102,7 @@ public class TorneoDAO {
             return false;
         }
     }
-
+    //Devuelve el último torneo creado por un organizador
     public Torneo buscarUltimoPorOrganizador(int idOrganizador) {
         String sql = "SELECT * FROM TORNEO WHERE id_organizador = ? ORDER BY id DESC LIMIT 1";
         try (PreparedStatement ps = ConexionDB.getConexion().prepareStatement(sql)) {
@@ -112,7 +114,7 @@ public class TorneoDAO {
         }
         return null;
     }
-
+    //Convierte una fila del ResultSet en un objeto Torneo
     private Torneo mapear(ResultSet rs) throws SQLException {
         return new Torneo(
                 rs.getInt("id"),

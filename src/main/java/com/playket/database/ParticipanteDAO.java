@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ParticipanteDAO {
-    //Añade un nuevo participante a un torneo
+    //Inserta un nuevo participante en la base de datos
     public boolean insertar(Participante p) {
         String sql = "INSERT INTO PARTICIPANTE (nombre, apellidos, email, id_torneo) " +
                 "VALUES (?, ?, ?, ?)";
@@ -45,7 +45,7 @@ public class ParticipanteDAO {
             return false;
         }
     }
-
+    //Convierte una fila del ResultSet en un objeto Participante
     private Participante mapear(ResultSet rs) throws SQLException {
         return new Participante(
                 rs.getInt("id"),
