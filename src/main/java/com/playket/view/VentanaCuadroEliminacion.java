@@ -7,6 +7,7 @@ import com.playket.util.EstiloApp;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -81,44 +82,70 @@ public class VentanaCuadroEliminacion extends JFrame {
 
     public void cargarCuadro(List<Partido> partidos, Map<Integer, Participante> mapaParticipantes) {
         panelCuadro.removeAll();
+        partidoSeleccionado = null;
+        panelSeleccionado = null;
 
-        JPanel ronda = new JPanel();
-        ronda.setLayout(new BoxLayout(ronda, BoxLayout.Y_AXIS));
-        ronda.setBackground(EstiloApp.BLANCO);
-        ronda.setBorder(BorderFactory.createTitledBorder(
-                BorderFactory.createLineBorder(EstiloApp.AZUL_OSCURO),
-                "Ronda 1"
-        ));
-
+        // Agrupar los partidos por ronda manteniendo el orden numérico
+        java.util.TreeMap<Integer, List<Partido>> porRonda = new java.util.TreeMap<>();
         for (Partido p : partidos) {
-            JPanel panelPartido = crearPanelPartido(p, mapaParticipantes);
-            panelPartido.addMouseListener(new java.awt.event.MouseAdapter() {
-                public void mouseClicked(java.awt.event.MouseEvent e) {
-                    if (panelSeleccionado != null) {
-                        panelSeleccionado.setBackground(EstiloApp.BLANCO);
-                        panelSeleccionado.setBorder(
-                                BorderFactory.createLineBorder(EstiloApp.GRIS_BORDE));
-                    }
-                    partidoSeleccionado = p;
-                    panelSeleccionado = panelPartido;
-                    panelPartido.setBackground(EstiloApp.AZUL_SEL);
-                    panelPartido.setBorder(
-                            BorderFactory.createLineBorder(EstiloApp.AZUL_OSCURO, 2));
-                }
-                public void mouseEntered(java.awt.event.MouseEvent e) {
-                    if (panelPartido != panelSeleccionado)
-                        panelPartido.setBackground(EstiloApp.AZUL_SEL);
-                }
-                public void mouseExited(java.awt.event.MouseEvent e) {
-                    if (panelPartido != panelSeleccionado)
-                        panelPartido.setBackground(EstiloApp.BLANCO);
-                }
-            });
-            ronda.add(panelPartido);
-            ronda.add(Box.createRigidArea(new Dimension(0, 6)));
+            porRonda.computeIfAbsent(p.getRonda(), k -> new ArrayList<>()).add(p);
         }
 
-        panelCuadro.add(ronda);
+        int totalRondas = porRonda.size();
+
+        for (java.util.Map.Entry<Integer, List<Partido>> entrada : porRonda.entrySet()) {
+            int numRonda = entrada.getKey();
+            List<Partido> partidosRonda = entrada.getValue();
+
+            // Nombre de la ronda: Final si es la última y tiene un solo partido
+            String nombreRonda;
+            if (numRonda == totalRondas && partidosRonda.size() == 1) {
+                nombreRonda = "Final";
+            } else if (numRonda == totalRondas - 1 && partidosRonda.size() == 2) {
+                nombreRonda = "Semifinales";
+            } else {
+                nombreRonda = "Ronda " + numRonda;
+            }
+
+            JPanel columnaRonda = new JPanel();
+            columnaRonda.setLayout(new BoxLayout(columnaRonda, BoxLayout.Y_AXIS));
+            columnaRonda.setBackground(EstiloApp.BLANCO);
+            columnaRonda.setBorder(BorderFactory.createTitledBorder(
+                    BorderFactory.createLineBorder(EstiloApp.AZUL_OSCURO),
+                    nombreRonda
+            ));
+
+            for (Partido p : partidosRonda) {
+                JPanel panelPartido = crearPanelPartido(p, mapaParticipantes);
+                panelPartido.addMouseListener(new java.awt.event.MouseAdapter() {
+                    public void mouseClicked(java.awt.event.MouseEvent e) {
+                        if (panelSeleccionado != null) {
+                            panelSeleccionado.setBackground(EstiloApp.BLANCO);
+                            panelSeleccionado.setBorder(
+                                    BorderFactory.createLineBorder(EstiloApp.GRIS_BORDE));
+                        }
+                        partidoSeleccionado = p;
+                        panelSeleccionado = panelPartido;
+                        panelPartido.setBackground(EstiloApp.AZUL_SEL);
+                        panelPartido.setBorder(
+                                BorderFactory.createLineBorder(EstiloApp.AZUL_OSCURO, 2));
+                    }
+                    public void mouseEntered(java.awt.event.MouseEvent e) {
+                        if (panelPartido != panelSeleccionado)
+                            panelPartido.setBackground(EstiloApp.AZUL_SEL);
+                    }
+                    public void mouseExited(java.awt.event.MouseEvent e) {
+                        if (panelPartido != panelSeleccionado)
+                            panelPartido.setBackground(EstiloApp.BLANCO);
+                    }
+                });
+                columnaRonda.add(panelPartido);
+                columnaRonda.add(Box.createRigidArea(new Dimension(0, 6)));
+            }
+
+            panelCuadro.add(columnaRonda);
+        }
+
         panelCuadro.revalidate();
         panelCuadro.repaint();
     }

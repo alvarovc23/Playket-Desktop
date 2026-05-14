@@ -9,8 +9,8 @@ public class PartidoDAO {
     //Guarda un nuevo partido en la base de datos
     public boolean insertar(Partido p) {
         String sql = "INSERT INTO PARTIDO (fecha, hora, sede, estado, tipo_victoria, " +
-                "id_torneo, id_local, id_visitante, id_ganador) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "id_torneo, id_local, id_visitante, id_ganador, ronda) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = ConexionDB.getConexion().prepareStatement(sql)) {
             ps.setDate(1, p.getFecha() != null ? Date.valueOf(p.getFecha()) : null);
             ps.setTime(2, p.getHora() != null ? Time.valueOf(p.getHora()) : null);
@@ -22,6 +22,7 @@ public class PartidoDAO {
             ps.setInt(8, p.getIdVisitante());
             if (p.getIdGanador() != null) ps.setInt(9, p.getIdGanador());
             else ps.setNull(9, Types.INTEGER);
+            ps.setInt(10, p.getRonda());
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             System.err.println("Error al insertar partido: " + e.getMessage());
@@ -68,6 +69,7 @@ public class PartidoDAO {
         p.setIdVisitante(rs.getInt("id_visitante"));
         int ganador = rs.getInt("id_ganador");
         p.setIdGanador(rs.wasNull() ? null : ganador);
+        p.setRonda(rs.getInt("ronda"));
         return p;
     }
 }

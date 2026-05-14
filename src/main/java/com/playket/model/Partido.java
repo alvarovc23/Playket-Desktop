@@ -14,12 +14,13 @@ public class Partido {
     private int idLocal;
     private int idVisitante;
     private Integer idGanador;
+    private int ronda;
 
     public Partido() {}
 
     public Partido(int id, LocalDate fecha, LocalTime hora, String sede,
                    String estado, String tipoVictoria, int idTorneo,
-                   int idLocal, int idVisitante, Integer idGanador) {
+                   int idLocal, int idVisitante, Integer idGanador, int ronda) {
         this.id = id;
         this.fecha = fecha;
         this.hora = hora;
@@ -30,6 +31,7 @@ public class Partido {
         this.idLocal = idLocal;
         this.idVisitante = idVisitante;
         this.idGanador = idGanador;
+        this.ronda = ronda;
     }
 
     public int getId() { return id; }
@@ -52,4 +54,6 @@ public class Partido {
     public void setIdVisitante(int idVisitante) { this.idVisitante = idVisitante; }
     public Integer getIdGanador() { return idGanador; }
     public void setIdGanador(Integer idGanador) { this.idGanador = idGanador; }
+    public int getRonda() { return ronda; }
+    public void setRonda(int ronda) { this.ronda = ronda; }
 }

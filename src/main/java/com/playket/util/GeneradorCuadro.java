@@ -33,6 +33,7 @@ public class GeneradorCuadro {
             partido.setIdLocal(mezclados.get(i).getId());
             partido.setIdVisitante(mezclados.get(i + 1).getId());
             partido.setEstado("PENDIENTE");
+            partido.setRonda(1);
             if (!partidoDAO.insertar(partido)) {
                 todoOk = false;
             }
