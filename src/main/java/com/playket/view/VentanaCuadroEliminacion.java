@@ -14,6 +14,7 @@ public class VentanaCuadroEliminacion extends JFrame {
 
     private final Torneo torneo;
     private JPanel panelCuadro;
+    private JPanel panelSeleccionado = null;
     private JButton btnVolver;
     private JButton btnCerrarTorneo;
     private JButton btnRegistrarResultado;
@@ -93,14 +94,24 @@ public class VentanaCuadroEliminacion extends JFrame {
             JPanel panelPartido = crearPanelPartido(p, mapaParticipantes);
             panelPartido.addMouseListener(new java.awt.event.MouseAdapter() {
                 public void mouseClicked(java.awt.event.MouseEvent e) {
+                    if (panelSeleccionado != null) {
+                        panelSeleccionado.setBackground(EstiloApp.BLANCO);
+                        panelSeleccionado.setBorder(
+                                BorderFactory.createLineBorder(EstiloApp.GRIS_BORDE));
+                    }
                     partidoSeleccionado = p;
-                    panelCuadro.repaint();
+                    panelSeleccionado = panelPartido;
+                    panelPartido.setBackground(EstiloApp.AZUL_SEL);
+                    panelPartido.setBorder(
+                            BorderFactory.createLineBorder(EstiloApp.AZUL_OSCURO, 2));
                 }
                 public void mouseEntered(java.awt.event.MouseEvent e) {
-                    panelPartido.setBackground(EstiloApp.AZUL_SEL);
+                    if (panelPartido != panelSeleccionado)
+                        panelPartido.setBackground(EstiloApp.AZUL_SEL);
                 }
                 public void mouseExited(java.awt.event.MouseEvent e) {
-                    panelPartido.setBackground(EstiloApp.BLANCO);
+                    if (panelPartido != panelSeleccionado)
+                        panelPartido.setBackground(EstiloApp.BLANCO);
                 }
             });
             ronda.add(panelPartido);

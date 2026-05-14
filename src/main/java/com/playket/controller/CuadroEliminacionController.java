@@ -54,7 +54,11 @@ public class CuadroEliminacionController {
     }
 
     private void registrarResultado() {
-        // Primero comprobamos si el torneo está cerrado
+        if (torneo.getIdOrganizador() != usuarioActual.getId()) {
+            JOptionPane.showMessageDialog(vista,
+                    "Solo el organizador puede registrar resultados");
+            return;
+        }
         if (torneo.getEstado().equals("FINALIZADO")) {
             JOptionPane.showMessageDialog(vista, "Este torneo ya está cerrado");
             return;
