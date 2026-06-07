@@ -58,12 +58,12 @@ public class VentanaInicio extends JFrame {
         JLabel lblMisTorneos = new JLabel("Mis torneos");
         lblMisTorneos.setFont(EstiloApp.FUENTE_SUBTITULO);
         lblMisTorneos.setForeground(EstiloApp.AZUL_OSCURO);
-        lblMisTorneos.setAlignmentX(Component.LEFT_ALIGNMENT);
+        lblMisTorneos.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         panelMisTorneos = new JPanel();
         panelMisTorneos.setLayout(new BoxLayout(panelMisTorneos, BoxLayout.Y_AXIS));
         panelMisTorneos.setBackground(EstiloApp.GRIS_CLARO);
-        panelMisTorneos.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panelMisTorneos.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         btnCrearTorneo = EstiloApp.crearBtnPrimario("+ Crear nuevo torneo");
         btnCrearTorneo.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -82,8 +82,22 @@ public class VentanaInicio extends JFrame {
         btnBuscar = EstiloApp.crearBtnSecundario("Buscar torneos");
         panelBottom.add(btnBuscar);
 
+        // Panel centrador: envuelve el contenido para que quede centrado horizontalmente
+        JPanel panelCentrador = new JPanel(new GridBagLayout());
+        panelCentrador.setBackground(EstiloApp.GRIS_CLARO);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.insets = new Insets(0, 0, 0, 0);
+        panelCentrador.add(panelContenido, gbc);
+
+        JScrollPane scroll = new JScrollPane(panelCentrador);
+        scroll.setBorder(null);
+        scroll.getViewport().setBackground(EstiloApp.GRIS_CLARO);
+
         panelPrincipal.add(cabecera, BorderLayout.NORTH);
-        panelPrincipal.add(new JScrollPane(panelContenido), BorderLayout.CENTER);
+        panelPrincipal.add(scroll, BorderLayout.CENTER);
         panelPrincipal.add(panelBottom, BorderLayout.SOUTH);
         add(panelPrincipal);
     }
