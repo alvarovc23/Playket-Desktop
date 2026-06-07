@@ -2,6 +2,7 @@ package com.playket.controller;
 
 import com.playket.database.UsuarioDAO;
 import com.playket.model.Usuario;
+import com.playket.util.CifradorDES;
 import com.playket.view.VentanaInicio;
 import com.playket.view.VentanaLogin;
 import com.playket.view.VentanaRecuperarPassword;
@@ -49,7 +50,7 @@ public class LoginController {
 
         Usuario usuario = usuarioDAO.buscarPorEmail(email);
 
-        if(usuario == null || !password.equals(usuario.getPassword())) {
+        if(usuario == null || !CifradorDES.verificar(password, usuario.getPassword())) {
             registrarIntentoFallido(email);
             int intentosActuales = 0;
             if(intentosFallidos.containsKey(email)) {

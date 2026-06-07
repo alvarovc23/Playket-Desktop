@@ -2,6 +2,7 @@ package com.playket.controller;
 
 import com.playket.database.UsuarioDAO;
 import com.playket.model.Usuario;
+import com.playket.util.CifradorDES;
 import com.playket.view.VentanaInicio;
 import com.playket.view.VentanaPerfil;
 import javax.swing.*;
@@ -38,7 +39,7 @@ public class PerfilController {
 
         // Si quiere cambiar la contraseña
         if (!passwordActual.isEmpty() || !passwordNueva.isEmpty()) {
-            if (!passwordActual.equals(usuarioActual.getPassword())) {
+            if (!CifradorDES.verificar(passwordActual, usuarioActual.getPassword())) {
                 vista.setMensaje("La contraseña actual no es correcta");
                 return;
             }
@@ -50,7 +51,12 @@ public class PerfilController {
                 vista.setMensaje("Las contraseñas no coinciden");
                 return;
             }
-            usuarioActual.setPassword(passwordNueva);
+            String passwordCifrada = CifradorDES.cifrar(passwordNueva);
+            if (passwordCifrada == null) {
+                vista.setMensaje("Error al cifrar la contraseña, inténtalo de nuevo");
+                return;
+            }
+            usuarioActual.setPassword(passwordCifrada);
         }
 
         usuarioActual.setNombre(nombre);

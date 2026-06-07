@@ -2,6 +2,7 @@ package com.playket.controller;
 
 import com.playket.database.UsuarioDAO;
 import com.playket.model.Usuario;
+import com.playket.util.CifradorDES;
 import com.playket.view.VentanaLogin;
 import com.playket.view.VentanaRegistro;
 import javax.swing.*;
@@ -52,13 +53,22 @@ public class RegistroController {
             return;
         }
 
+        // Cifrar contraseña y respuesta de seguridad antes de guardarlas
+        String passwordCifrada = CifradorDES.cifrar(password);
+        String respuestaCifrada = CifradorDES.cifrar(respuesta);
+
+        if (passwordCifrada == null || respuestaCifrada == null) {
+            vista.setMensaje("Error al cifrar los datos, inténtalo de nuevo");
+            return;
+        }
+
         Usuario usuario = new Usuario();
         usuario.setNombre(nombre);
         usuario.setApellidos(apellidos);
         usuario.setEmail(email);
-        usuario.setPassword(password);
+        usuario.setPassword(passwordCifrada);
         usuario.setPreguntaSeguridad(pregunta);
-        usuario.setRespuestaSeg(respuesta);
+        usuario.setRespuestaSeg(respuestaCifrada);
 
         if (usuarioDAO.insertar(usuario)) {
             vista.setMensajeVerde("Cuenta creada correctamente");

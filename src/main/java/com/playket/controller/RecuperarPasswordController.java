@@ -2,6 +2,7 @@ package com.playket.controller;
 
 import com.playket.database.UsuarioDAO;
 import com.playket.model.Usuario;
+import com.playket.util.CifradorDES;
 import com.playket.view.VentanaLogin;
 import com.playket.view.VentanaRecuperarPassword;
 import javax.swing.*;
@@ -51,7 +52,7 @@ public class RecuperarPasswordController {
             return;
         }
 
-        if (!respuesta.equals(usuarioEncontrado.getRespuestaSeg())) {
+        if (!CifradorDES.verificar(respuesta, usuarioEncontrado.getRespuestaSeg())) {
             vista.setMensaje("La respuesta no es correcta");
             return;
         }
@@ -66,7 +67,13 @@ public class RecuperarPasswordController {
             return;
         }
 
-        usuarioEncontrado.setPassword(passwordNueva);
+        String passwordCifrada = CifradorDES.cifrar(passwordNueva);
+        if (passwordCifrada == null) {
+            vista.setMensaje("Error al cifrar la contraseña, inténtalo de nuevo");
+            return;
+        }
+
+        usuarioEncontrado.setPassword(passwordCifrada);
         if (usuarioDAO.actualizar(usuarioEncontrado)) {
             vista.setMensajeVerde("Contraseña cambiada correctamente");
             Timer timer = new javax.swing.Timer(1500, ev -> volver());
