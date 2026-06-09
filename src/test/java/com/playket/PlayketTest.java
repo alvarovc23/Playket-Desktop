@@ -30,14 +30,14 @@ public class PlayketTest {
     // ─── FUNCIONALES ──────────────────────────────────────────────
 
     @Test @Order(1)
-    @DisplayName("PR05 - Búsqueda por estado devuelve lista")
+    @DisplayName("PR01 - Búsqueda por estado devuelve lista")
     void testBusquedaPorEstado() {
         List lista = torneoDAO.buscar("", null, "EN_CURSO");
         assertNotNull(lista);
     }
 
     @Test @Order(2)
-    @DisplayName("PR07 - Crear torneo en base de datos")
+    @DisplayName("PR02 - Crear torneo en base de datos")
     void testCrearTorneo() {
         Torneo t = new Torneo();
         t.setNombre("TorneoTest_JUnit");
@@ -52,7 +52,7 @@ public class PlayketTest {
     }
 
     @Test @Order(3)
-    @DisplayName("PR08 - Añadir participante a un torneo")
+    @DisplayName("PR03 - Añadir participante a un torneo")
     void testAnadirParticipante() {
         Torneo torneo = torneoDAO.buscar("TorneoTest_JUnit", null, "")
                 .stream().findFirst().orElse(null);
@@ -68,7 +68,7 @@ public class PlayketTest {
     // ─── INTEGRACIÓN ──────────────────────────────────────────────
 
     @Test @Order(4)
-    @DisplayName("PR09 - Actualizar estado del torneo a EN_CURSO")
+    @DisplayName("PR04 - Actualizar estado del torneo a EN_CURSO")
     void testActualizarEstado() {
         Torneo torneo = torneoDAO.buscar("TorneoTest_JUnit", null, "")
                 .stream().findFirst().orElse(null);
@@ -82,7 +82,7 @@ public class PlayketTest {
     }
 
     @Test @Order(5)
-    @DisplayName("PR10 - Cerrar torneo cambia estado a FINALIZADO")
+    @DisplayName("PR05 - Cerrar torneo cambia estado a FINALIZADO")
     void testCerrarTorneo() {
         Torneo torneo = torneoDAO.buscar("TorneoTest_JUnit", null, "")
                 .stream().findFirst().orElse(null);
@@ -94,7 +94,7 @@ public class PlayketTest {
     // ─── SEGURIDAD ────────────────────────────────────────────────
 
     @Test @Order(6)
-    @DisplayName("PR-SEG03 - El torneo solo pertenece a su organizador")
+    @DisplayName("PR-SEG01 - El torneo solo pertenece a su organizador")
     void testTorneoPerteneceSoloAOrganizador() {
         Torneo t = new Torneo();
         t.setNombre("SEG_Propiedad");
@@ -115,7 +115,7 @@ public class PlayketTest {
     }
 
     @Test @Order(7)
-    @DisplayName("PR-SEG05 - listarPorOrganizador no devuelve torneos ajenos")
+    @DisplayName("PR-SEG02 - listarPorOrganizador no devuelve torneos ajenos")
     void testListarTorneosNoDevuelveAjenos() {
         Torneo t = new Torneo();
         t.setNombre("SEG_Lista");
@@ -142,7 +142,7 @@ public class PlayketTest {
     }
 
     @Test @Order(8)
-    @DisplayName("PR-SEG07 - Las contraseñas se almacenan cifradas")
+    @DisplayName("PR-SEG03 - Las contraseñas se almacenan cifradas")
     void testPasswordCifrada() {
         String email = "seg_cifrado@playket.com";
         String passPlano = "TestPass123";
@@ -165,7 +165,7 @@ public class PlayketTest {
     }
 
     @Test @Order(9)
-    @DisplayName("PR-SEG08 - Tres intentos fallidos activan el bloqueo")
+    @DisplayName("PR-SEG04 - Tres intentos fallidos activan el bloqueo")
     void testBloqueoTrasTreeIntentos() throws Exception {
         LoginController ctrl = loginSinVista();
         String email = "victima@playket.com";
@@ -176,7 +176,7 @@ public class PlayketTest {
     }
 
     @Test @Order(10)
-    @DisplayName("PR-SEG10 - El bloqueo expira después de 5 minutos")
+    @DisplayName("PR-SEG05 - El bloqueo expira después de 5 minutos")
     void testBloqueoExpira() throws Exception {
         LoginController ctrl = loginSinVista();
         String email = "victima2@playket.com";
