@@ -5,9 +5,11 @@ import com.playket.database.TorneoDAO;
 import com.playket.model.Deporte;
 import com.playket.model.Torneo;
 import com.playket.model.Usuario;
+import com.playket.util.PlayketException;
 import com.playket.view.VentanaCrearTorneo;
 import com.playket.view.VentanaGestionParticipantes;
 import com.playket.view.VentanaInicio;
+import javax.swing.JOptionPane;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -30,8 +32,14 @@ public class CrearTorneoController {
     }
 
     private void cargarDeportes() {
-        List<Deporte> deportes = deporteDAO.listarTodos();
-        vista.cargarDeportes(deportes);
+        try {
+            List<Deporte> deportes = deporteDAO.listarTodos();
+            vista.cargarDeportes(deportes);
+        } catch (PlayketException e) {
+            JOptionPane.showMessageDialog(vista,
+                    "No se pudieron cargar los deportes. Comprueba la conexión e inténtalo de nuevo.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void inicializarEventos() {
@@ -70,15 +78,19 @@ public class CrearTorneoController {
         torneo.setIdDeporte(deporte.getId());
         torneo.setIdOrganizador(usuarioActual.getId());
 
-        if (torneoDAO.insertar(torneo)) {
-            Torneo torneoCreado = torneoDAO.buscarUltimoPorOrganizador(usuarioActual.getId());
-            vista.dispose();
-            VentanaGestionParticipantes ventanaParticipantes =
-                    new VentanaGestionParticipantes(torneoCreado);
-            new GestionParticipantesController(ventanaParticipantes, torneoCreado, usuarioActual);
-            ventanaParticipantes.setVisible(true);
-        } else {
-            vista.setMensaje("Error al crear el torneo, inténtalo de nuevo");
+        try {
+            if (torneoDAO.insertar(torneo)) {
+                Torneo torneoCreado = torneoDAO.buscarUltimoPorOrganizador(usuarioActual.getId());
+                vista.dispose();
+                VentanaGestionParticipantes ventanaParticipantes =
+                        new VentanaGestionParticipantes(torneoCreado);
+                new GestionParticipantesController(ventanaParticipantes, torneoCreado, usuarioActual);
+                ventanaParticipantes.setVisible(true);
+            } else {
+                vista.setMensaje("Error al crear el torneo, inténtalo de nuevo");
+            }
+        } catch (PlayketException e) {
+            vista.setMensaje("No se pudo crear el torneo. Comprueba la conexión e inténtalo de nuevo.");
         }
     }
 

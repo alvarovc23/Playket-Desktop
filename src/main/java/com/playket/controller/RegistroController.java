@@ -3,6 +3,7 @@ package com.playket.controller;
 import com.playket.database.UsuarioDAO;
 import com.playket.model.Usuario;
 import com.playket.util.CifradorDES;
+import com.playket.util.PlayketException;
 import com.playket.view.VentanaLogin;
 import com.playket.view.VentanaRegistro;
 import javax.swing.*;
@@ -48,35 +49,39 @@ public class RegistroController {
             return;
         }
 
-        if (usuarioDAO.emailExiste(email)) {
-            vista.setMensaje("Este correo ya está registrado");
-            return;
-        }
+        try {
+            if (usuarioDAO.emailExiste(email)) {
+                vista.setMensaje("Este correo ya está registrado");
+                return;
+            }
 
-        // Cifrar contraseña y respuesta de seguridad antes de guardarlas
-        String passwordCifrada = CifradorDES.cifrar(password);
-        String respuestaCifrada = CifradorDES.cifrar(respuesta);
+            String passwordCifrada = CifradorDES.cifrar(password);
+            String respuestaCifrada = CifradorDES.cifrar(respuesta);
 
-        if (passwordCifrada == null || respuestaCifrada == null) {
-            vista.setMensaje("Error al cifrar los datos, inténtalo de nuevo");
-            return;
-        }
+            if (passwordCifrada == null || respuestaCifrada == null) {
+                vista.setMensaje("Error al cifrar los datos, inténtalo de nuevo");
+                return;
+            }
 
-        Usuario usuario = new Usuario();
-        usuario.setNombre(nombre);
-        usuario.setApellidos(apellidos);
-        usuario.setEmail(email);
-        usuario.setPassword(passwordCifrada);
-        usuario.setPreguntaSeguridad(pregunta);
-        usuario.setRespuestaSeg(respuestaCifrada);
+            Usuario usuario = new Usuario();
+            usuario.setNombre(nombre);
+            usuario.setApellidos(apellidos);
+            usuario.setEmail(email);
+            usuario.setPassword(passwordCifrada);
+            usuario.setPreguntaSeguridad(pregunta);
+            usuario.setRespuestaSeg(respuestaCifrada);
 
-        if (usuarioDAO.insertar(usuario)) {
-            vista.setMensajeVerde("Cuenta creada correctamente");
-            Timer timer = new javax.swing.Timer(1500, ev -> volver());
-            timer.setRepeats(false);
-            timer.start();
-        } else {
-            vista.setMensaje("Error al crear la cuenta, inténtalo de nuevo");
+            if (usuarioDAO.insertar(usuario)) {
+                vista.setMensajeVerde("Cuenta creada correctamente");
+                Timer timer = new javax.swing.Timer(1500, ev -> volver());
+                timer.setRepeats(false);
+                timer.start();
+            } else {
+                vista.setMensaje("Error al crear la cuenta, inténtalo de nuevo");
+            }
+
+        } catch (PlayketException e) {
+            vista.setMensaje("No se pudo crear la cuenta. Comprueba la conexión e inténtalo de nuevo.");
         }
     }
 

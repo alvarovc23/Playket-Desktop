@@ -3,6 +3,7 @@ package com.playket.controller;
 import com.playket.database.UsuarioDAO;
 import com.playket.model.Usuario;
 import com.playket.util.CifradorDES;
+import com.playket.util.PlayketException;
 import com.playket.view.VentanaInicio;
 import com.playket.view.VentanaPerfil;
 import javax.swing.*;
@@ -37,7 +38,6 @@ public class PerfilController {
             return;
         }
 
-        // Si quiere cambiar la contraseña
         if (!passwordActual.isEmpty() || !passwordNueva.isEmpty()) {
             if (!CifradorDES.verificar(passwordActual, usuarioActual.getPassword())) {
                 vista.setMensaje("La contraseña actual no es correcta");
@@ -62,13 +62,17 @@ public class PerfilController {
         usuarioActual.setNombre(nombre);
         usuarioActual.setApellidos(apellidos);
 
-        if (usuarioDAO.actualizar(usuarioActual)) {
-            vista.setMensajeVerde("Perfil actualizado correctamente");
-            Timer timer = new javax.swing.Timer(1500, ev -> volver());
-            timer.setRepeats(false);
-            timer.start();
-        } else {
-            vista.setMensaje("Error al guardar los cambios");
+        try {
+            if (usuarioDAO.actualizar(usuarioActual)) {
+                vista.setMensajeVerde("Perfil actualizado correctamente");
+                Timer timer = new javax.swing.Timer(1500, ev -> volver());
+                timer.setRepeats(false);
+                timer.start();
+            } else {
+                vista.setMensaje("Error al guardar los cambios");
+            }
+        } catch (PlayketException e) {
+            vista.setMensaje("No se pudieron guardar los cambios. Comprueba la conexión e inténtalo de nuevo.");
         }
     }
 

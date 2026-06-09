@@ -16,6 +16,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -29,14 +30,14 @@ public class PlayketTest {
     // ─── FUNCIONALES ──────────────────────────────────────────────
 
     @Test @Order(1)
-    @DisplayName("PR01 - Búsqueda por estado devuelve lista")
+    @DisplayName("PR05 - Búsqueda por estado devuelve lista")
     void testBusquedaPorEstado() {
         List lista = torneoDAO.buscar("", null, "EN_CURSO");
         assertNotNull(lista);
     }
 
     @Test @Order(2)
-    @DisplayName("PR02 - Crear torneo en base de datos")
+    @DisplayName("PR07 - Crear torneo en base de datos")
     void testCrearTorneo() {
         Torneo t = new Torneo();
         t.setNombre("TorneoTest_JUnit");
@@ -51,7 +52,7 @@ public class PlayketTest {
     }
 
     @Test @Order(3)
-    @DisplayName("PR03 - Añadir participante a un torneo")
+    @DisplayName("PR08 - Añadir participante a un torneo")
     void testAnadirParticipante() {
         Torneo torneo = torneoDAO.buscar("TorneoTest_JUnit", null, "")
                 .stream().findFirst().orElse(null);
@@ -67,7 +68,7 @@ public class PlayketTest {
     // ─── INTEGRACIÓN ──────────────────────────────────────────────
 
     @Test @Order(4)
-    @DisplayName("PR04 - Actualizar estado del torneo a EN_CURSO")
+    @DisplayName("PR09 - Actualizar estado del torneo a EN_CURSO")
     void testActualizarEstado() {
         Torneo torneo = torneoDAO.buscar("TorneoTest_JUnit", null, "")
                 .stream().findFirst().orElse(null);
@@ -81,7 +82,7 @@ public class PlayketTest {
     }
 
     @Test @Order(5)
-    @DisplayName("PR05 - Cerrar torneo cambia estado a FINALIZADO")
+    @DisplayName("PR10 - Cerrar torneo cambia estado a FINALIZADO")
     void testCerrarTorneo() {
         Torneo torneo = torneoDAO.buscar("TorneoTest_JUnit", null, "")
                 .stream().findFirst().orElse(null);
@@ -93,7 +94,7 @@ public class PlayketTest {
     // ─── SEGURIDAD ────────────────────────────────────────────────
 
     @Test @Order(6)
-    @DisplayName("PR-SEG01 - El torneo solo pertenece a su organizador")
+    @DisplayName("PR-SEG03 - El torneo solo pertenece a su organizador")
     void testTorneoPerteneceSoloAOrganizador() {
         Torneo t = new Torneo();
         t.setNombre("SEG_Propiedad");
@@ -114,7 +115,7 @@ public class PlayketTest {
     }
 
     @Test @Order(7)
-    @DisplayName("PR-SEG02 - listarPorOrganizador no devuelve torneos ajenos")
+    @DisplayName("PR-SEG05 - listarPorOrganizador no devuelve torneos ajenos")
     void testListarTorneosNoDevuelveAjenos() {
         Torneo t = new Torneo();
         t.setNombre("SEG_Lista");
@@ -141,7 +142,7 @@ public class PlayketTest {
     }
 
     @Test @Order(8)
-    @DisplayName("PR-SEG03 - Las contraseñas se almacenan cifradas")
+    @DisplayName("PR-SEG07 - Las contraseñas se almacenan cifradas")
     void testPasswordCifrada() {
         String email = "seg_cifrado@playket.com";
         String passPlano = "TestPass123";
@@ -164,7 +165,7 @@ public class PlayketTest {
     }
 
     @Test @Order(9)
-    @DisplayName("PR-SEG04 - Tres intentos fallidos activan el bloqueo")
+    @DisplayName("PR-SEG08 - Tres intentos fallidos activan el bloqueo")
     void testBloqueoTrasTreeIntentos() throws Exception {
         LoginController ctrl = loginSinVista();
         String email = "victima@playket.com";
@@ -175,7 +176,7 @@ public class PlayketTest {
     }
 
     @Test @Order(10)
-    @DisplayName("PR-SEG05 - El bloqueo expira después de 5 minutos")
+    @DisplayName("PR-SEG10 - El bloqueo expira después de 5 minutos")
     void testBloqueoExpira() throws Exception {
         LoginController ctrl = loginSinVista();
         String email = "victima2@playket.com";
@@ -189,9 +190,49 @@ public class PlayketTest {
         assertFalse(estaBloqueado(ctrl, email));
     }
 
-    // ─── RENDIMIENTO ──────────────────────────────────────────────
+    // ─── CONCURRENCIA ─────────────────────────────────────────────
 
     @Test @Order(11)
+    @DisplayName("PR-CONC01 - Varios usuarios crean torneos a la vez sin errores")
+    void testCreacionConcurrente() throws InterruptedException {
+        int numUsuarios = 5;
+        CountDownLatch inicio = new CountDownLatch(1);   // señal de salida
+        CountDownLatch fin = new CountDownLatch(numUsuarios); // espera a que todos terminen
+        boolean[] resultados = new boolean[numUsuarios];
+
+        for (int i = 0; i < numUsuarios; i++) {
+            final int indice = i;
+            new Thread(() -> {
+                try {
+                    inicio.await(); // todos esperan aquí hasta que se dé la señal
+                    Torneo t = new Torneo();
+                    t.setNombre("TorneoConc_" + indice);
+                    t.setFormato("ELIMINACION");
+                    t.setEstado("ABIERTO");
+                    t.setFechaInicio(LocalDate.now());
+                    t.setNumParticipantes(4);
+                    t.setIdDeporte(1);
+                    t.setIdOrganizador(indice + 1);
+                    resultados[indice] = torneoDAO.insertar(t);
+                } catch (Exception e) {
+                    resultados[indice] = false;
+                } finally {
+                    fin.countDown(); // avisa de que este hilo ha terminado
+                }
+            }).start();
+        }
+
+        inicio.countDown(); // da la señal de salida a todos a la vez
+        fin.await();        // espera a que todos terminen
+
+        for (int i = 0; i < numUsuarios; i++) {
+            assertTrue(resultados[i], "El torneo " + i + " no se insertó correctamente");
+        }
+    }
+
+    // ─── RENDIMIENTO ──────────────────────────────────────────────
+
+    @Test @Order(12)
     @DisplayName("PR-REND01 - Búsqueda responde en menos de 2 segundos")
     void testRendimientoBusqueda() {
         long inicio = System.currentTimeMillis();

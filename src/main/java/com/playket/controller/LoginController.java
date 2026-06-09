@@ -3,11 +3,11 @@ package com.playket.controller;
 import com.playket.database.UsuarioDAO;
 import com.playket.model.Usuario;
 import com.playket.util.CifradorDES;
+import com.playket.util.PlayketException;
 import com.playket.view.VentanaInicio;
 import com.playket.view.VentanaLogin;
 import com.playket.view.VentanaRecuperarPassword;
 import com.playket.view.VentanaRegistro;
-
 import java.time.LocalDateTime;
 import java.util.HashMap;
 
@@ -18,7 +18,6 @@ public class LoginController {
 
     private static final int MAX_INTENTOS = 3;
     private static final int MINUTOS_BLOQUEO = 5;
-    //Contador de intentos fallidos para el bloque de acceso
     private HashMap<String, Integer> intentosFallidos = new HashMap<>();
     private HashMap<String, LocalDateTime> tiempoBloqueo = new HashMap<>();
 
@@ -27,56 +26,56 @@ public class LoginController {
         usuarioDAO = new UsuarioDAO();
         inicializarEventos();
     }
-    //Asocia los eventos de los botones a sus acciones correspondientes
+
     private void inicializarEventos() {
         vista.getBtnIniciarSesion().addActionListener(e -> iniciarSesion());
         vista.getBtnCrearCuenta().addActionListener(e -> abrirRegistro());
         vista.getBtnOlvidePassword().addActionListener(e -> abrirRecuperar());
     }
-    //Valida las credenciales e inicia sesión si son correctas
+
     private void iniciarSesion() {
         String email = vista.getEmail();
         String password = vista.getPassword();
 
-        if(email.isEmpty() || password.isEmpty()) {
+        if (email.isEmpty() || password.isEmpty()) {
             vista.setMensaje("Completa todos los campos");
             return;
         }
 
-        if(estaBloqueado(email)) {
+        if (estaBloqueado(email)) {
             vista.setMensaje("Acceso bloqueado 5 min por intentos fallidos");
             return;
         }
 
-        Usuario usuario = usuarioDAO.buscarPorEmail(email);
+        try {
+            Usuario usuario = usuarioDAO.buscarPorEmail(email);
 
-        if(usuario == null || !CifradorDES.verificar(password, usuario.getPassword())) {
-            registrarIntentoFallido(email);
-            int intentosActuales = 0;
-            if(intentosFallidos.containsKey(email)) {
-                intentosActuales = intentosFallidos.get(email);
+            if (usuario == null || !CifradorDES.verificar(password, usuario.getPassword())) {
+                registrarIntentoFallido(email);
+                int intentosActuales = intentosFallidos.containsKey(email) ? intentosFallidos.get(email) : 0;
+                int restantes = MAX_INTENTOS - intentosActuales;
+                if (restantes <= 0) {
+                    vista.setMensaje("Acceso bloqueado 5 min por intentos fallidos");
+                } else {
+                    vista.setMensaje("Credenciales incorrectas. Intentos restantes: " + restantes);
+                }
+                return;
             }
-            int restantes = MAX_INTENTOS - intentosActuales;
-            if(restantes <= 0) {
-                vista.setMensaje("Acceso bloqueado 5 min por intentos fallidos");
-            } else {
-                vista.setMensaje("Credenciales incorrectas. Intentos restantes: " + restantes);
-            }
-            return;
+
+            intentosFallidos.remove(email);
+            tiempoBloqueo.remove(email);
+            vista.setMensaje("");
+            abrirInicio(usuario);
+
+        } catch (PlayketException e) {
+            vista.setMensaje("No se pudo conectar. Comprueba la conexión e inténtalo de nuevo.");
         }
-
-        //Login correcto, limpiamos contadores
-        intentosFallidos.remove(email);
-        tiempoBloqueo.remove(email);
-        vista.setMensaje("");
-        abrirInicio(usuario);
     }
 
     private boolean estaBloqueado(String email) {
-        if(!tiempoBloqueo.containsKey(email)) return false;
-
+        if (!tiempoBloqueo.containsKey(email)) return false;
         LocalDateTime desbloqueo = tiempoBloqueo.get(email).plusMinutes(MINUTOS_BLOQUEO);
-        if(LocalDateTime.now().isAfter(desbloqueo)) {
+        if (LocalDateTime.now().isAfter(desbloqueo)) {
             tiempoBloqueo.remove(email);
             intentosFallidos.remove(email);
             return false;
@@ -85,12 +84,9 @@ public class LoginController {
     }
 
     private void registrarIntentoFallido(String email) {
-        int intentos = 1;
-        if(intentosFallidos.containsKey(email)) {
-            intentos = intentosFallidos.get(email) + 1;
-        }
+        int intentos = intentosFallidos.containsKey(email) ? intentosFallidos.get(email) + 1 : 1;
         intentosFallidos.put(email, intentos);
-        if(intentos >= MAX_INTENTOS) {
+        if (intentos >= MAX_INTENTOS) {
             tiempoBloqueo.put(email, LocalDateTime.now());
         }
     }

@@ -3,12 +3,14 @@ package com.playket.controller;
 import com.playket.database.TorneoDAO;
 import com.playket.model.Torneo;
 import com.playket.model.Usuario;
+import com.playket.util.PlayketException;
 import com.playket.view.VentanaClasificacionLiga;
 import com.playket.view.VentanaCuadroEliminacion;
 import com.playket.view.VentanaCrearTorneo;
 import com.playket.view.VentanaInicio;
 import com.playket.view.VentanaBuscarTorneos;
 import com.playket.view.VentanaPerfil;
+import javax.swing.JOptionPane;
 import java.util.List;
 
 public class InicioController {
@@ -33,8 +35,14 @@ public class InicioController {
     }
 
     private void cargarDatos() {
-        List<Torneo> misTorneos = torneoDAO.listarPorOrganizador(usuarioActual.getId());
-        vista.cargarMisTorneos(misTorneos);
+        try {
+            List<Torneo> misTorneos = torneoDAO.listarPorOrganizador(usuarioActual.getId());
+            vista.cargarMisTorneos(misTorneos);
+        } catch (PlayketException e) {
+            JOptionPane.showMessageDialog(vista,
+                    "No se pudieron cargar tus torneos. Comprueba la conexión e inténtalo de nuevo.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void abrirCrearTorneo() {

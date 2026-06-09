@@ -1,12 +1,13 @@
 package com.playket.database;
 
 import com.playket.model.Partido;
+import com.playket.util.PlayketException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PartidoDAO {
-    //Guarda un nuevo partido en la base de datos
+
     public boolean insertar(Partido p) {
         String sql = "INSERT INTO PARTIDO (fecha, hora, sede, estado, tipo_victoria, " +
                 "id_torneo, id_local, id_visitante, id_ganador, ronda) " +
@@ -25,11 +26,10 @@ public class PartidoDAO {
             ps.setInt(10, p.getRonda());
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
-            System.err.println("Error al insertar partido: " + e.getMessage());
-            return false;
+            throw new PlayketException("Error al guardar el partido", e);
         }
     }
-    //Devuelve todos los partidos de un torneo concreto ordenados por ID
+
     public List<Partido> listarPorTorneo(int idTorneo) {
         List<Partido> lista = new ArrayList<>();
         String sql = "SELECT * FROM PARTIDO WHERE id_torneo = ? ORDER BY id";
@@ -38,11 +38,11 @@ public class PartidoDAO {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) lista.add(mapear(rs));
         } catch (SQLException e) {
-            System.err.println("Error al listar partidos: " + e.getMessage());
+            throw new PlayketException("Error al cargar los partidos del torneo", e);
         }
         return lista;
     }
-    //Guarda el resultado de un partido y lo marca como finalizado
+
     public boolean actualizarResultado(int idPartido, int idGanador, String tipoVictoria) {
         String sql = "UPDATE PARTIDO SET id_ganador = ?, tipo_victoria = ?, estado = 'FINALIZADO' WHERE id = ?";
         try (PreparedStatement ps = ConexionDB.getConexion().prepareStatement(sql)) {
@@ -51,11 +51,10 @@ public class PartidoDAO {
             ps.setInt(3, idPartido);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
-            System.err.println("Error al actualizar resultado: " + e.getMessage());
-            return false;
+            throw new PlayketException("Error al guardar el resultado del partido", e);
         }
     }
-    //Convierte una fila del ResultSet en un objeto Partido
+
     private Partido mapear(ResultSet rs) throws SQLException {
         Partido p = new Partido();
         p.setId(rs.getInt("id"));

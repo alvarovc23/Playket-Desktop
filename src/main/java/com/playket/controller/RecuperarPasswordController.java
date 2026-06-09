@@ -3,6 +3,7 @@ package com.playket.controller;
 import com.playket.database.UsuarioDAO;
 import com.playket.model.Usuario;
 import com.playket.util.CifradorDES;
+import com.playket.util.PlayketException;
 import com.playket.view.VentanaLogin;
 import com.playket.view.VentanaRecuperarPassword;
 import javax.swing.*;
@@ -32,14 +33,17 @@ public class RecuperarPasswordController {
             return;
         }
 
-        usuarioEncontrado = usuarioDAO.buscarPorEmail(email);
-        if (usuarioEncontrado == null) {
-            vista.setMensaje("No existe ninguna cuenta con ese correo");
-            return;
+        try {
+            usuarioEncontrado = usuarioDAO.buscarPorEmail(email);
+            if (usuarioEncontrado == null) {
+                vista.setMensaje("No existe ninguna cuenta con ese correo");
+                return;
+            }
+            vista.setMensaje("");
+            vista.mostrarSegundoPaso(usuarioEncontrado.getPreguntaSeguridad());
+        } catch (PlayketException e) {
+            vista.setMensaje("No se pudo comprobar el correo. Comprueba la conexión e inténtalo de nuevo.");
         }
-
-        vista.setMensaje("");
-        vista.mostrarSegundoPaso(usuarioEncontrado.getPreguntaSeguridad());
     }
 
     private void cambiarPassword() {
@@ -74,13 +78,18 @@ public class RecuperarPasswordController {
         }
 
         usuarioEncontrado.setPassword(passwordCifrada);
-        if (usuarioDAO.actualizar(usuarioEncontrado)) {
-            vista.setMensajeVerde("Contraseña cambiada correctamente");
-            Timer timer = new javax.swing.Timer(1500, ev -> volver());
-            timer.setRepeats(false);
-            timer.start();
-        } else {
-            vista.setMensaje("Error al cambiar la contraseña");
+
+        try {
+            if (usuarioDAO.actualizar(usuarioEncontrado)) {
+                vista.setMensajeVerde("Contraseña cambiada correctamente");
+                Timer timer = new javax.swing.Timer(1500, ev -> volver());
+                timer.setRepeats(false);
+                timer.start();
+            } else {
+                vista.setMensaje("Error al cambiar la contraseña");
+            }
+        } catch (PlayketException e) {
+            vista.setMensaje("No se pudo cambiar la contraseña. Comprueba la conexión e inténtalo de nuevo.");
         }
     }
 

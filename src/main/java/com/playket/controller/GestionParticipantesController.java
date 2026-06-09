@@ -6,9 +6,10 @@ import com.playket.model.Torneo;
 import com.playket.model.Usuario;
 import com.playket.util.GeneradorCuadro;
 import com.playket.util.GeneradorLiga;
+import com.playket.util.PlayketException;
 import com.playket.view.VentanaGestionParticipantes;
 import com.playket.view.VentanaInicio;
-import javax.swing.*;
+import javax.swing.JOptionPane;
 import java.util.List;
 
 public class GestionParticipantesController {
@@ -37,8 +38,14 @@ public class GestionParticipantesController {
     }
 
     private void cargarParticipantes() {
-        participantes = participanteDAO.listarPorTorneo(torneo.getId());
-        vista.cargarParticipantes(participantes);
+        try {
+            participantes = participanteDAO.listarPorTorneo(torneo.getId());
+            vista.cargarParticipantes(participantes);
+        } catch (PlayketException e) {
+            JOptionPane.showMessageDialog(vista,
+                    "No se pudieron cargar los participantes. Comprueba la conexión e inténtalo de nuevo.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void añadirParticipante() {
@@ -60,12 +67,16 @@ public class GestionParticipantesController {
         p.setEmail(vista.getEmailParticipante());
         p.setIdTorneo(torneo.getId());
 
-        if (participanteDAO.insertar(p)) {
-            vista.limpiarFormulario();
-            vista.setMensajeVerde("Participante añadido");
-            cargarParticipantes();
-        } else {
-            vista.setMensaje("Error al añadir participante");
+        try {
+            if (participanteDAO.insertar(p)) {
+                vista.limpiarFormulario();
+                vista.setMensajeVerde("Participante añadido");
+                cargarParticipantes();
+            } else {
+                vista.setMensaje("Error al añadir participante");
+            }
+        } catch (PlayketException e) {
+            vista.setMensaje("No se pudo añadir el participante. Comprueba la conexión e inténtalo de nuevo.");
         }
     }
 
@@ -76,11 +87,15 @@ public class GestionParticipantesController {
             return;
         }
         Participante p = participantes.get(fila);
-        if (participanteDAO.eliminar(p.getId())) {
-            vista.setMensajeVerde("Participante eliminado");
-            cargarParticipantes();
-        } else {
-            vista.setMensaje("Error al eliminar participante");
+        try {
+            if (participanteDAO.eliminar(p.getId())) {
+                vista.setMensajeVerde("Participante eliminado");
+                cargarParticipantes();
+            } else {
+                vista.setMensaje("Error al eliminar participante");
+            }
+        } catch (PlayketException e) {
+            vista.setMensaje("No se pudo eliminar el participante. Comprueba la conexión e inténtalo de nuevo.");
         }
     }
 
@@ -101,25 +116,27 @@ public class GestionParticipantesController {
                 opciones,
                 opciones[0]
         );
-        if (confirmacion != 0) return; // 0 = "Sí", 1 = "No"
+        if (confirmacion != 0) return;
 
-        boolean exito;
-        if (torneo.getFormato().equals("ELIMINACION")) {
-            GeneradorCuadro generador = new GeneradorCuadro();
-            exito = generador.generarEliminacion(torneo, participantes);
-        } else {
-            GeneradorLiga generador = new GeneradorLiga();
-            exito = generador.generarCalendario(torneo, participantes);
-        }
+        try {
+            boolean exito;
+            if (torneo.getFormato().equals("ELIMINACION")) {
+                exito = new GeneradorCuadro().generarEliminacion(torneo, participantes);
+            } else {
+                exito = new GeneradorLiga().generarCalendario(torneo, participantes);
+            }
 
-        if (exito) {
-            JOptionPane.showMessageDialog(vista, "¡Cuadro generado correctamente!");
-            vista.dispose();
-            VentanaInicio ventanaInicio = new VentanaInicio(usuarioActual);
-            new InicioController(ventanaInicio, usuarioActual);
-            ventanaInicio.setVisible(true);
-        } else {
-            vista.setMensaje("Error al generar el cuadro");
+            if (exito) {
+                JOptionPane.showMessageDialog(vista, "¡Cuadro generado correctamente!");
+                vista.dispose();
+                VentanaInicio ventanaInicio = new VentanaInicio(usuarioActual);
+                new InicioController(ventanaInicio, usuarioActual);
+                ventanaInicio.setVisible(true);
+            } else {
+                vista.setMensaje("Error al generar el cuadro");
+            }
+        } catch (PlayketException e) {
+            vista.setMensaje("No se pudo generar el cuadro. Comprueba la conexión e inténtalo de nuevo.");
         }
     }
 

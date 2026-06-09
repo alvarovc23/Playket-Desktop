@@ -5,6 +5,7 @@ import com.playket.model.Participante;
 import com.playket.model.Partido;
 import com.playket.model.Torneo;
 import com.playket.model.Usuario;
+import com.playket.util.PlayketException;
 import com.playket.view.VentanaClasificacionLiga;
 import com.playket.view.VentanaCuadroEliminacion;
 import com.playket.view.VentanaRegistrarResultado;
@@ -44,63 +45,45 @@ public class RegistrarResultadoController {
     private void registrar(int idGanador) {
         Object[] opciones = {"Sí", "No"};
         int confirmacion = JOptionPane.showOptionDialog(
-                vista,
-                "¿Confirmas este resultado?",
-                "Confirmar",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE,
-                null,
-                opciones,
-                opciones[0]
-        );
-        if (confirmacion != 0) return; // 0 = "Sí", 1 = "No"
+                vista, "¿Confirmas este resultado?", "Confirmar",
+                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
+                null, opciones, opciones[0]);
+        if (confirmacion != 0) return;
 
-        if (partidoDAO.actualizarResultado(partido.getId(), idGanador, "normal")) {
-            // Si es eliminación, comprobar si hay que generar la siguiente ronda
-            if (torneo.getFormato().equals("ELIMINACION")) {
-                avanzarRondaSiProcede(partido.getRonda());
+        try {
+            if (partidoDAO.actualizarResultado(partido.getId(), idGanador, "normal")) {
+                if (torneo.getFormato().equals("ELIMINACION")) {
+                    avanzarRondaSiProcede(partido.getRonda());
+                }
+                JOptionPane.showMessageDialog(vista, "Resultado registrado correctamente");
+                volver();
+            } else {
+                vista.setMensaje("Error al registrar el resultado");
             }
-            JOptionPane.showMessageDialog(vista, "Resultado registrado correctamente");
-            volver();
-        } else {
-            vista.setMensaje("Error al registrar el resultado");
+        } catch (PlayketException e) {
+            vista.setMensaje("No se pudo guardar el resultado. Comprueba la conexión e inténtalo de nuevo.");
         }
     }
 
-    // Comprueba si todos los partidos de la ronda actual están finalizados.
-    // Si es así y quedan más de un ganador, crea los partidos de la ronda siguiente.
     private void avanzarRondaSiProcede(int rondaActual) {
         List<Partido> todos = partidoDAO.listarPorTorneo(torneo.getId());
 
-        // Separar los partidos de la ronda actual
         List<Partido> deEstaRonda = new ArrayList<>();
         for (Partido p : todos) {
-            if (p.getRonda() == rondaActual) {
-                deEstaRonda.add(p);
-            }
+            if (p.getRonda() == rondaActual) deEstaRonda.add(p);
         }
 
-        // Comprobar que todos están finalizados
         for (Partido p : deEstaRonda) {
-            if (!p.getEstado().equals("FINALIZADO")) {
-                return; // Aún hay partidos pendientes en esta ronda
-            }
+            if (!p.getEstado().equals("FINALIZADO")) return;
         }
 
-        // Recoger los ganadores de la ronda
         List<Integer> ganadores = new ArrayList<>();
         for (Partido p : deEstaRonda) {
-            if (p.getIdGanador() != null) {
-                ganadores.add(p.getIdGanador());
-            }
+            if (p.getIdGanador() != null) ganadores.add(p.getIdGanador());
         }
 
-        // Si solo queda un ganador, la final ya se ha jugado; no hay siguiente ronda
-        if (ganadores.size() <= 1) {
-            return;
-        }
+        if (ganadores.size() <= 1) return;
 
-        // Crear los partidos de la siguiente ronda emparejando ganadores de dos en dos
         int siguienteRonda = rondaActual + 1;
         for (int i = 0; i < ganadores.size() - 1; i += 2) {
             Partido nuevo = new Partido();

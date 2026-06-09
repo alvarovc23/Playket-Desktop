@@ -1,12 +1,13 @@
 package com.playket.database;
 
 import com.playket.model.Participante;
+import com.playket.util.PlayketException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ParticipanteDAO {
-    //Inserta un nuevo participante en la base de datos
+
     public boolean insertar(Participante p) {
         String sql = "INSERT INTO PARTICIPANTE (nombre, apellidos, email, id_torneo) " +
                 "VALUES (?, ?, ?, ?)";
@@ -17,11 +18,10 @@ public class ParticipanteDAO {
             ps.setInt(4, p.getIdTorneo());
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
-            System.err.println("Error al insertar participante: " + e.getMessage());
-            return false;
+            throw new PlayketException("Error al añadir el participante", e);
         }
     }
-    //Devuelve todos los participantes de un torneo concreto
+
     public List<Participante> listarPorTorneo(int idTorneo) {
         List<Participante> lista = new ArrayList<>();
         String sql = "SELECT * FROM PARTICIPANTE WHERE id_torneo = ? ORDER BY nombre";
@@ -30,22 +30,21 @@ public class ParticipanteDAO {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) lista.add(mapear(rs));
         } catch (SQLException e) {
-            System.err.println("Error al listar participantes: " + e.getMessage());
+            throw new PlayketException("Error al cargar los participantes del torneo", e);
         }
         return lista;
     }
-    //Elimina un participante por su id
+
     public boolean eliminar(int id) {
         String sql = "DELETE FROM PARTICIPANTE WHERE id = ?";
         try (PreparedStatement ps = ConexionDB.getConexion().prepareStatement(sql)) {
             ps.setInt(1, id);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
-            System.err.println("Error al eliminar participante: " + e.getMessage());
-            return false;
+            throw new PlayketException("Error al eliminar el participante", e);
         }
     }
-    //Convierte una fila del ResultSet en un objeto Participante
+
     private Participante mapear(ResultSet rs) throws SQLException {
         return new Participante(
                 rs.getInt("id"),

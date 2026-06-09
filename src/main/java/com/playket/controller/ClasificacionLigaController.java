@@ -4,6 +4,7 @@ import com.playket.database.ParticipanteDAO;
 import com.playket.database.PartidoDAO;
 import com.playket.database.TorneoDAO;
 import com.playket.model.*;
+import com.playket.util.PlayketException;
 import com.playket.view.VentanaClasificacionLiga;
 import com.playket.view.VentanaInicio;
 import com.playket.view.VentanaRegistrarResultado;
@@ -32,14 +33,18 @@ public class ClasificacionLigaController {
     }
 
     private void cargarDatos() {
-        partidos = partidoDAO.listarPorTorneo(torneo.getId());
-        List<Participante> participantes = participanteDAO.listarPorTorneo(torneo.getId());
-
-        mapaParticipantes = new HashMap<>();
-        for (Participante p : participantes) mapaParticipantes.put(p.getId(), p);
-
-        cargarClasificacion(participantes);
-        cargarPartidos();
+        try {
+            partidos = partidoDAO.listarPorTorneo(torneo.getId());
+            List<Participante> participantes = participanteDAO.listarPorTorneo(torneo.getId());
+            mapaParticipantes = new HashMap<>();
+            for (Participante p : participantes) mapaParticipantes.put(p.getId(), p);
+            cargarClasificacion(participantes);
+            cargarPartidos();
+        } catch (PlayketException e) {
+            JOptionPane.showMessageDialog(vista,
+                    "No se pudo cargar la clasificación. Comprueba la conexión e inténtalo de nuevo.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void cargarClasificacion(List<Participante> participantes) {
@@ -98,18 +103,8 @@ public class ClasificacionLigaController {
         for (Partido p : partidos) {
             Participante local = mapaParticipantes.get(p.getIdLocal());
             Participante visitante = mapaParticipantes.get(p.getIdVisitante());
-            String nombreLocal;
-            if(local != null) {
-                nombreLocal = local.getNombre();
-            } else {
-                nombreLocal = "?";
-            }
-            String nombreVisitante;
-            if(visitante != null) {
-                nombreVisitante = visitante.getNombre();
-            } else {
-                nombreVisitante = "?";
-            }
+            String nombreLocal = (local != null) ? local.getNombre() : "?";
+            String nombreVisitante = (visitante != null) ? visitante.getNombre() : "?";
             filas.add(new Object[]{nombreLocal, nombreVisitante, p.getEstado()});
             ids.add(new int[]{p.getId(), p.getIdLocal(), p.getIdVisitante()});
         }
@@ -124,7 +119,6 @@ public class ClasificacionLigaController {
     }
 
     private void registrarResultado() {
-        // Primero comprobamos si el torneo está cerrado
         if (torneo.getEstado().equals("FINALIZADO")) {
             JOptionPane.showMessageDialog(vista, "Este torneo ya está cerrado");
             return;
@@ -151,10 +145,8 @@ public class ClasificacionLigaController {
             return;
         }
 
-        VentanaRegistrarResultado ventana = new VentanaRegistrarResultado(
-                partido, mapaParticipantes);
-        new RegistrarResultadoController(ventana, partido, torneo,
-                usuarioActual, mapaParticipantes);
+        VentanaRegistrarResultado ventana = new VentanaRegistrarResultado(partido, mapaParticipantes);
+        new RegistrarResultadoController(ventana, partido, torneo, usuarioActual, mapaParticipantes);
         ventana.setVisible(true);
         vista.dispose();
     }
@@ -167,10 +159,8 @@ public class ClasificacionLigaController {
     }
 
     private void cerrarTorneo() {
-        // Solo el organizador puede cerrar el torneo
         if (torneo.getIdOrganizador() != usuarioActual.getId()) {
-            JOptionPane.showMessageDialog(vista,
-                    "Solo el organizador puede cerrar el torneo");
+            JOptionPane.showMessageDialog(vista, "Solo el organizador puede cerrar el torneo");
             return;
         }
 
@@ -187,15 +177,21 @@ public class ClasificacionLigaController {
         );
         if (confirmacion != 0) return;
 
-        TorneoDAO torneoDAO = new TorneoDAO();
-        if (torneoDAO.cerrar(torneo.getId())) {
-            JOptionPane.showMessageDialog(vista, "Torneo cerrado correctamente");
-            vista.dispose();
-            VentanaInicio ventanaInicio = new VentanaInicio(usuarioActual);
-            new InicioController(ventanaInicio, usuarioActual);
-            ventanaInicio.setVisible(true);
-        } else {
-            JOptionPane.showMessageDialog(vista, "Error al cerrar el torneo");
+        try {
+            TorneoDAO torneoDAO = new TorneoDAO();
+            if (torneoDAO.cerrar(torneo.getId())) {
+                JOptionPane.showMessageDialog(vista, "Torneo cerrado correctamente");
+                vista.dispose();
+                VentanaInicio ventanaInicio = new VentanaInicio(usuarioActual);
+                new InicioController(ventanaInicio, usuarioActual);
+                ventanaInicio.setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(vista, "Error al cerrar el torneo");
+            }
+        } catch (PlayketException e) {
+            JOptionPane.showMessageDialog(vista,
+                    "No se pudo cerrar el torneo. Comprueba la conexión e inténtalo de nuevo.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 }
